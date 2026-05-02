@@ -20,8 +20,9 @@ class Home extends CI_Controller{
 
 	/* Get all list of user interest */
 	public function index() {
-		
+		$data['isActiveCategories'] = getAllCategory();
 		$data['allBanners'] = $this->Home_model->getHomeBanners(); // get home banner data
+		$data['allBrands'] = getAllBrands();
 		$data['amazingServices'] = $this->Home_model->getPageData('amazing_services');
 		// $data['allPackages'] = $this->Home_model->getAllPackages();
 		$data['ourPricing'] = $this->Home_model->getPageData('our_pricing_content');

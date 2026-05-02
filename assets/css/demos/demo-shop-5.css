@@ -128,7 +128,7 @@ h2.word-rotator-title .word-rotate {
 }
 #header .header-top p {
 	float: right;
-	margin: 3px 20px 3px 0;
+	margin: 13px 20px 3px 0;
 	text-align: left;
 	font-size: 11px;
 	line-height: 19px;
@@ -865,8 +865,8 @@ h2.word-rotator-title .word-rotate {
 	background-color: #f0f0ed;
 }
 #header .header-nav-main nav > ul > li > a.dropdown-toggle {
-	padding-left: 20px;
-	padding-right: 30px;
+	padding-left: 15px;
+	padding-right: 25px;
 	-webkit-transition: none;
 	-moz-transition: none;
 	transition: none;

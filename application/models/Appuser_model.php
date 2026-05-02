@@ -177,15 +177,15 @@ class Appuser_model extends CI_Model{
             return $data;
         }
     }
-    // public function login($email, $password) {
-    //     $data = array();
-    //     $query = $this->db->get_where($this->table, array('password' => md5($password), 'email' => $email,'status' => 1));
-    //     if($query->num_rows() > 0 ) {
-    //         return  $query->result();
-    //     } else {
-    //         return $data;
-    //     }
-    // }
+    public function user_login_by_email($email, $password) {
+        $data = array();
+        $query = $this->db->get_where($this->table, array('password' => md5($password), 'email' => $email,'status' => 1));
+        if($query->num_rows() > 0 ) {
+            return  $query->result();
+        } else {
+            return $data;
+        }
+    }
     /* Function for login user end */
 
 

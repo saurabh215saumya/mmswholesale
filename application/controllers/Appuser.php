@@ -271,12 +271,10 @@ class Appuser extends CI_Controller{
 
     /* Function for user signup start */
     public function sign_up() {
-        // $data['headerMenus'] = $this->Category_model->getActiveCategoryList();
-        // $data['schoolData'] = $this->School_model->getSchoolList();
-
-        $this->load->view('template/front/header');
+        $data['isActiveCategories'] = getAllCategory();
+        $this->load->view('template/front/header', $data);
         $this->load->view('appuser/signup');
-        $this->load->view('template/front/footer');
+        $this->load->view('template/front/footer', $data);
     }
     /* Function for user signup end */
 
@@ -292,6 +290,7 @@ class Appuser extends CI_Controller{
             $address_2 = $_POST['address_2'];
             $cityname = $_POST['cityname'];
             $postal_code = $_POST['postal_code'];
+            $confirm_password = $_POST['confirm_password'];
 
             $del_first_name = $_POST['del_first_name'];
             $del_last_name = $_POST['del_last_name'];
@@ -316,6 +315,7 @@ class Appuser extends CI_Controller{
                     'address_2' => $address_2,
                     'city' => $cityname,
                     'postal_code' => $postal_code,
+                    'password' => md5($confirm_password),
                 );
 
                 // echo "<pre>"; print_r($data); die;
@@ -377,9 +377,10 @@ class Appuser extends CI_Controller{
 
     /* Function for user login start */
     public function login() {
-        $this->load->view('template/front/header');
+        $data['isActiveCategories'] = getAllCategory();
+        $this->load->view('template/front/header', $data);
         $this->load->view('appuser/signin');
-        $this->load->view('template/front/footer');
+        $this->load->view('template/front/footer', $data);
     }
     /* Function for user login end */
 
@@ -414,6 +415,32 @@ class Appuser extends CI_Controller{
                     $session_array = array(
                         'id' => $row->id, 
                         'full_name' => $row->full_name,
+                        'mobile' => $row->mobile,
+                        'email' => $row->email,
+                    );
+                    $this->session->set_userdata('front_logged_in', $session_array); 
+                }
+                $res = "success";
+            } else {
+                $res = "failed";
+            }
+            echo $res;
+        }
+    }
+
+
+    public function user_login_by_email() {
+        if(!empty($_POST)){
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            $result = $this->appuser_model->user_login_by_email($email, $password); // Validate Login Credentials
+            if ($result) {
+                $session_array = array();
+                foreach ($result as $row) {
+                    $session_array = array(
+                        'id' => $row->id, 
+                        'first_name' => $row->first_name,
+                        'last_name' => $row->last_name,
                         'mobile' => $row->mobile,
                         'email' => $row->email,
                     );

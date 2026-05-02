@@ -212,7 +212,29 @@ if ( ! function_exists('getAllCategory')) {
     //$CI->db->limit($limit,$start);
     $CI->db->order_by('category_name', 'ASC');
     $query = $CI->db->get();
-    //echo $CI->db->last_query(); die;
+    // echo $CI->db->last_query(); die;
+    $count=$query->num_rows();
+    if($count>0){
+      return $query->result();
+    } else {
+      return array();
+    }
+  }
+}
+/* Function for get all category end */
+
+/* Function for get all category start */
+if ( ! function_exists('getAllSubCategory')) {
+  function getAllSubCategory($id) {
+    $CI =& get_instance();  
+    $CI->db->from('tbl_sub_category');
+    $CI->db->where('category_id', $id);
+    $CI->db->where('is_deleted', "0");
+    $CI->db->where('status', "1");
+    //$CI->db->limit($limit,$start);
+    $CI->db->order_by('sub_category_name', 'ASC');
+    $query = $CI->db->get();
+    // echo $CI->db->last_query();
     $count=$query->num_rows();
     if($count>0){
       return $query->result();
@@ -495,3 +517,45 @@ if ( ! function_exists('getPackageIdByServiceSlug')) {
 //     }
 // }
 /* Get All Active Keywords Start */  
+
+
+
+/* Function for get all user cart product start */
+if ( ! function_exists('getUserCartProduct')) {
+  function getUserCartProduct($user_id=""){
+    $data = array();
+    $CI =& get_instance();
+    $query = $CI->db->select('tc.id')
+    ->from('tbl_cart AS tc')
+    ->where('tc.user_id', $user_id)
+    ->order_by('tc.id', 'DESC')
+    ->get();
+    if ($query->num_rows() > 0) {
+        $data = $query->result();
+        return $data;
+    } else {
+        return $data;
+    }
+  }
+}
+/* Function for get all user cart product end */
+
+/* Function for get all brands start */
+if ( ! function_exists('getAllBrands')) {
+  function getAllBrands() {
+    $CI =& get_instance();  
+    $CI->db->select('id, brand_name, brand_slug, image, image_alt_1');
+    $CI->db->from('tbl_brands');
+    $CI->db->where('is_deleted', "0");
+    $CI->db->where('status', "1");
+    $query = $CI->db->get();
+    //echo $CI->db->last_query(); die;
+    $count=$query->num_rows();
+    if($count>0){
+      return $query->result();
+    } else {
+      return array();
+    }
+  }
+}
+/* Function for get all brands end */

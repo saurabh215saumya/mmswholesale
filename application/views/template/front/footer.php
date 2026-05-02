@@ -35,15 +35,14 @@
                             <h4>Contact Information</h4>
                             <ul class="contact">
                                 <li>
-                                    <p><i class="fa fa-map-marker"></i> <strong>Address:</strong><br> 1234 Street Name,
-                                        City, US</p>
+                                    <p><i class="fa fa-map-marker"></i> <strong>Address:</strong><br> 44 Harford Street, Birmingham, GB</p>
                                 </li>
                                 <li>
-                                    <p><i class="fa fa-phone"></i> <strong>Phone:</strong><br> (123) 456-7890</p>
+                                    <p><i class="fa fa-phone"></i> <strong>Phone:</strong><br> +44 7447446059</p>
                                 </li>
                                 <li>
                                     <p><i class="fa fa-envelope-o"></i> <strong>Email:</strong><br> <a
-                                            href="mailto:mail@example.com">mail@example.com</a></p>
+                                            href="mailto:mail@example.com">accounts@mmswholesale.co.uk</a></p>
                                 </li>
                                 <li>
                                     <p><i class="fa fa-clock-o"></i> <strong>Working Days/Hours:</strong><br> Mon - Sun
@@ -53,27 +52,11 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <h4>Main Features</h4>
+                        <h4>Our Locations</h4>
                         <ul class="features">
                             <li>
                                 <i class="fa fa-check text-color-primary"></i>
-                                <a href="#">Super Fast Template</a>
-                            </li>
-                            <li>
-                                <i class="fa fa-check text-color-primary"></i>
-                                <a href="#">1st Seller Template</a>
-                            </li>
-                            <li>
-                                <i class="fa fa-check text-color-primary"></i>
-                                <a href="#">19 Unique Shop Layouts</a>
-                            </li>
-                            <li>
-                                <i class="fa fa-check text-color-primary"></i>
-                                <a href="#">Powerful Template Features</a>
-                            </li>
-                            <li>
-                                <i class="fa fa-check text-color-primary"></i>
-                                <a href="#">Mobile &amp; Retina Optimized</a>
+                                <a href="#">London</a>
                             </li>
                         </ul>
                     </div>
@@ -90,7 +73,7 @@
                             <div class="alert alert-danger hidden" id="newsletterError"></div>
 
 
-                            <p>Enter your e-mail Address:</p>
+                            <!-- <p>Enter your e-mail Address:</p>
                             <form id="newsletterForm" action="php/newsletter-subscribe.php" method="POST">
                                 <div class="input-group">
                                     <input class="form-control" placeholder="Email Address" name="newsletterEmail"
@@ -99,7 +82,7 @@
                                         <button class="btn btn-primary" type="submit">Submit</button>
                                     </span>
                                 </div>
-                            </form>
+                            </form> -->
                         </div>
                     </div>
                 </div>
@@ -107,7 +90,7 @@
             <div class="footer-copyright">
                 <div class="container">
                     <a href="index.html" class="logo">
-                        <img alt="FragX Website Template" class="img-responsive" src="<?php echo base_url('assets/images/img/demos/shop/logo-footer.png'); ?>">
+                        <img alt="MMS Wholesale Template" class="img-responsive" width="111" height="51" src="<?php echo base_url('assets/images/img/demos/shop/logo-shop.png'); ?>">
                     </a>
                     <ul class="social-icons">
                         <li class="social-icons-facebook"><a href="http://www.facebook.com/" target="_blank"
@@ -118,7 +101,7 @@
                                 title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
                     </ul>
                     <img alt="Payments" src="<?php echo base_url('assets/images/img/demos/shop/payments.png'); ?>" class="footer-payment">
-                    <p class="copyright-text">© Copyright 2016. All Rights Reserved.</p>
+                    <p class="copyright-text">© Copyright <?php echo date('Y'); ?>. All Rights Reserved.</p>
                 </div>
             </div>
         </footer>
