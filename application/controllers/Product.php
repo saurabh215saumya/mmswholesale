@@ -1092,10 +1092,10 @@ class Product extends CI_Controller{
 		// $data['whyWeBest'] = $this->Home_model->getPageData('why_we_best');
 		$data['produictDetails'] = $this->Product_model->getProductDetails($slug);
 		// $data['allPackageServices'] = $this->Package_model->getPackageServices($packageId);
-		$data['allBanners'] = $this->Home_model->getHomeBanners();
+		// $data['allBanners'] = $this->Home_model->getHomeBanners();
 
 		$this->load->view('template/front/header', $data);
-		$this->load->view('template/front/home_banner', $data);
+		// $this->load->view('template/front/home_banner', $data);
 		$this->load->view('product/product_detail', $data);
 		$this->load->view('template/front/footer', $data);
 	}
@@ -1110,15 +1110,6 @@ class Product extends CI_Controller{
 		$data['allCartProducts'] = $this->Product_model->getUserCartProduct($user_id);
 		$this->load->view('template/front/header', $data);
 		$this->load->view('product/cart_list', $data);
-		$this->load->view('template/front/footer', $data);
-	}
-/* Function for get user cart list end */
-
-/* Function for get user cart list start */
-	public function wish_list(){
-		$data['isActiveCategories'] = getAllCategory();
-		$this->load->view('template/front/header', $data);
-		$this->load->view('product/wish_list', $data);
 		$this->load->view('template/front/footer', $data);
 	}
 /* Function for get user cart list end */
@@ -1139,6 +1130,7 @@ class Product extends CI_Controller{
 
 /* Function for Add Single Item Into CART start */
 	public function addItemIntoCart() {
+		$userType = $this->session->userdata('front_logged_in')['user_type'];
 		$product_id = $_POST['product_id'];
 		$user_id = $_POST['user_id'];
 		$quantity = $_POST['quantity'];
@@ -1147,9 +1139,14 @@ class Product extends CI_Controller{
 		// $totalProductAmount = $_POST['product_price'];
 
 		$productDetailArr = $this->Product_model->getProductDetailsById($product_id);
-		// echo $product_id;
-		// echo "<pre>"; print_r($productDetailArr); die;
-		$totalProductAmount = $quantity*$productDetailArr['price'];
+		if($userType == 1){
+          	$productPrice = $productDetailArr['wholesale_price'];
+      	} else if($userType == 2){
+          	$productPrice = $productDetailArr['retailer_price'];
+      	} else {
+          	$productPrice = $productDetailArr['price'];
+      	}
+		$totalProductAmount = $quantity*$productPrice;
 		// $totalCodProductAmount = $quantity*$productDetailArr['old_price'];
 
 		$checkCartProduct = $this->Product_model->checkCartOtherProduct($cat_id, $sub_cat_id, $product_id, $user_id);
@@ -1157,7 +1154,7 @@ class Product extends CI_Controller{
 		if(count($checkCartProduct)>0){
             // $updatedQuantity = ($checkCartProduct['quantity']+$quantity);
             $updatedQuantity = $quantity;
-            $totUpdatedAmount = $updatedQuantity*$productDetailArr['price'];
+            $totUpdatedAmount = $updatedQuantity*$productPrice;
             // $totCodUpdatedAmount = $updatedQuantity*$productDetailArr['old_price'];
             $updateCartArr = array(
                 "quantity" => $updatedQuantity,
@@ -1210,6 +1207,60 @@ class Product extends CI_Controller{
 		}
 	}
 /* Delete Cart List Product End */
+
+
+/* Function for get user cart list start */
+	public function wish_list(){
+		$data['isActiveCategories'] = getAllCategory();
+		$this->load->view('template/front/header', $data);
+		$this->load->view('product/wish_list', $data);
+		$this->load->view('template/front/footer', $data);
+	}
+/* Function for get user cart list end */
+
+
+/* Function for add/Remove wishlist product start */
+	public function addWishlistProduct() {
+		$product_id = $_POST['product_id'];
+		$user_id = $_POST['user_id'];
+
+		$checkWishlistProduct = $this->Product_model->checkWishlistProduct($product_id, $user_id);
+		if($checkWishlistProduct>0){
+			$this->db->where('product_id', $product_id);
+            $this->db->where('user_id', $user_id);
+            if($this->db->delete('tbl_wishlist_product')){
+            	echo "deleted";
+            }
+		} else {
+			$insert_data = array(
+				'product_id' => $this->input->post('product_id'),
+				'user_id' => $this->input->post('user_id'),
+				'addedOn' => date('Y-m-d h:i:s'),
+			);
+			if($this->db->insert('tbl_wishlist_product', $insert_data)){
+				echo "added";
+			}
+		}
+	}
+/* Function for add/Remove wishlist product end */
+
+
+/* Function for delete wishlist product start */
+public function delete_wishlist_product($id) {
+	if (!$this->session->userdata('front_logged_in')) {
+		redirect('appuser/login');
+	}
+
+	$this->db->where('id', $id);
+    // $this->db->delete('tbl_wishlist_product');
+	if($this->db->delete('tbl_wishlist_product')) {
+		$this->session->set_flashdata('response', '<div class="alert alert-success">Deleted Successfully.</div>');
+	} else {
+		$this->session->set_flashdata('response', '<div class="alert alert-danger">Failed to Delete Product.</div>');
+	}
+		redirect($this->controller.'/wishlist-product', 'refresh');
+}
+/* Function for delete wishlist product start */
 
 /* Function End For Front-End Code */	
 

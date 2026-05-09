@@ -74,7 +74,7 @@ if($this->session->userdata('front_logged_in')){
                                     <span>Item in Cart</span>
                                 </a>
                                 <?php } ?>
-                                <a href="#" class="addtowishlist addtowishlist-always" title="Add to Wishlist">
+                                <a  onclick="return addProductInWishlist('<?php echo $products['id']; ?>');" class="addtowishlist addtowishlist-always" title="Add to Wishlist">
                                     <i class="fa fa-heart"></i>
                                 </a>
                             </div>
@@ -93,7 +93,6 @@ if($this->session->userdata('front_logged_in')){
 
 <script type="text/javascript">
     function addProductQuantity(cat_id, sub_cat_id, product_id){
-
         // Add item into cart
         var user_id = $('#session_user_id').val();
         // alert(user_id);
@@ -126,6 +125,36 @@ if($this->session->userdata('front_logged_in')){
         } else {
           window.location.href = "<?php echo base_url('/sign-in'); ?>";
         }
-        
+    }
+
+
+
+
+    function addProductInWishlist(product_id){
+        var user_id = $('#session_user_id').val();
+        var reqUrl = '<?php echo base_url('product/addWishlistProduct'); ?>';
+        if(user_id != ""){
+        var saveData = $.ajax({
+            type: "POST",
+            url: reqUrl,
+            data:"product_id="+product_id+"&user_id="+user_id,
+            dataType: "text",
+            success: function(resultData){ 
+             // alert(resultData); return false;
+                if(resultData == "added"){
+                    alert("Product add into wishlist.");
+                    window.location.href = "<?php echo base_url(); ?>";
+                    //document.getElementById("quantity_"+sid+"_"+pid).innerHTML = quantity;
+                    // document.getElementById("totPrice_"+id).innerHTML = totProPrice;
+                    
+                } else {
+                    alert("Removed product from wishlist.");
+                    window.location.href = "<?php echo base_url(); ?>";
+                }
+            }       
+        }); 
+        } else {
+          window.location.href = "<?php echo base_url('/sign-in'); ?>";
+        }
     }
 </script>

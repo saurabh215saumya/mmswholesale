@@ -315,5 +315,19 @@ public function getAllSubCategoryProductsBySlug($subcategoryId) {
     /* Function for delete user cart list product end */
 
 
+    /* Function for check cart for update duplicate entry start */
+    public function checkWishlistProduct($product_id, $user_id) {
+        $data = array();
+        $query = $this->db->select('*')
+        ->from('tbl_wishlist_product')
+        ->where('product_id', $product_id)
+        ->where('user_id', $user_id)
+        ->get();
+        // echo $this->db->last_query();die;
+        return  $query->num_rows();
+    }
+    /* Function for check cart for update duplicate entry end */
+
+
 
 }

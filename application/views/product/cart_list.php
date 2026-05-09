@@ -39,7 +39,14 @@ if($this->session->userdata('front_logged_in')){
                         } else {
                             $proImg = UPLOAD_PRODUCT_NO_IMAGE.'noimage.png';
                         }
-                        $totPrice = $row['proPrice']*$row['quantity'];
+                        if($userType == 1){
+                            $proPrice = $row['wholesale_price'];
+                        } else if($userType == 2){
+                            $proPrice = $row['retailer_price'];
+                        } else {
+                            $proPrice = $row['proPrice'];
+                        }
+                        $totPrice = $proPrice*$row['quantity'];
                         $subTotal += $totPrice;
                     ?>
                     <tr>
