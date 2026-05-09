@@ -112,6 +112,23 @@ $url_param = $this->uri->segment(2);
         </li>
         <!-- End of Product List -->
 
+
+        <!-- Product List -->
+        <li class="treeview <?php echo ($url == 'product') ? 'active' : '' ?>">
+          <a href="javascript:void(0);">
+            <i class="fa fa-tags"></i> <span>Product Management</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu menu-open" style="display: block;">
+            <li class="active"><a href="<?php echo base_url('product');?>"><i class="fa fa-circle-o"></i>Product List</a>
+            </li>
+            <li class="active"><a href="<?php echo base_url('product/addproduct');?>"><i class="fa fa-circle-o"></i>Add Product</a>         
+          </ul>
+        </li>
+        <!-- End of Product List -->
+
         
         <!-- Location Management List -->
          <li class="treeview <?php echo ($url == 'location') ? 'active' : '' ?>">
@@ -212,6 +229,22 @@ $url_param = $this->uri->segment(2);
           </ul>
         </li> --> 
          <!-- Appointment Management List-->
+
+
+          <!-- User Management List -->
+         <li class="treeview <?php echo ($url == 'appuser') ? 'active' : '' ?>">
+          <a href="javascript:void(0);">
+            <i class="fa fa-tags"></i> <span>User Management</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu menu-open" style="display: block;">
+            <li class="active"><a href="<?php echo base_url('appuser');?>"><i class="fa fa-circle-o"></i>User List</a>
+            </li>            
+          </ul>
+        </li>
+         <!-- User Management List-->
 
 
          <!-- Keyword List -->

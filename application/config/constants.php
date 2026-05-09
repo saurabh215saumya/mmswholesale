@@ -132,6 +132,9 @@ define('SHOW_GALLERY_PATH', BASE_URL.'/uploads/gallery/');	// Show path for user
 define('UPLOAD_CATEGORY_PATH', $docRoot.'/uploads/categories/'); //Upload path for user profile pic
 define('SHOW_CATEGORY_PATH', BASE_URL.'/uploads/categories/');	// Show path for user profile
 
+define('UPLOAD_PRODUCT_PATH', $docRoot.'/uploads/products/'); //Upload path for user profile pic
+define('SHOW_PRODUCT_PATH', BASE_URL.'/uploads/products/');	// Show path for user profile
+
 define('UPLOAD_SERVICE_PATH', $docRoot.'/uploads/services/'); //Upload path for user profile pic
 define('SHOW_SERVICE_PATH', BASE_URL.'/uploads/services/');
 

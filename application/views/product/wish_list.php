@@ -1,29 +1,11 @@
-<?php //echo "<pre>"; print_r($allProductsByCategory); die; ?>
 <div role="main" class="main">
       <section class="page-header mb-lg">
         <div class="container">
           <ul class="breadcrumb">
             <li><a href="<?php echo base_url(); ?>">Home</a></li>
 
-            <li><a href="javaScript:void(0);">
-              <?php 
-                $pageSlug = $this->uri->segment('1');
-                if($pageSlug === 'categories'){
-                  echo "Category"; 
-                } else { 
-                  echo "Sub Category"; 
-                }
-              ?></a></li>
-            <li class="active">
-            <?php 
-                $pageSlug = $this->uri->segment('1');
-                $slug = $this->uri->segment('2');
-                if($pageSlug === 'categories'){
-                  echo getCategoryNameBySlug($slug); 
-                } else { 
-                  echo getSubCategoryNameBySlug($slug);
-                }
-              ?></li>
+            <li><a href="javaScript:void(0);">Category</a></li>
+            <li class="active">Dresses</li>
           </ul>
         </div>
       </section>
@@ -31,7 +13,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-9 col-md-push-3">
-            <!-- <div class="toolbar mb-none">
+            <div class="toolbar mb-none">
               <div class="sorter">
                 <div class="sort-by">
                   <label>Sort by:</label>
@@ -69,50 +51,38 @@
                   </select>
                 </div>
               </div>
-            </div> -->
+            </div>
 
             <ul class="products-grid columns4">
-
-
-
-
-
-              <?php if(!empty($allProductsByCategory)){ 
-                $i=1;
-                foreach($allProductsByCategory as $products){
-                if(file_exists(UPLOAD_PRODUCT_PATH.$products['image'])) {
-                  $img = SHOW_PRODUCT_PATH.$products['image'];
-                } else {
-                  $img = UPLOAD_PRODUCT_NO_IMAGE;
-                }
-                ?>
               <li>
                 <div class="product">
                   <figure class="product-image-area">
-                    <a href="<?php echo base_url('product-details/'.$products['product_slug']); ?>" title="<?php echo $products['product_name']; ?>" class="product-image">
-                      <img src="<?php echo $img; ?>" alt="<?php echo $products['image_alt_1']; ?>">
-                      <img src="<?php echo $img; ?>" alt="<?php echo $products['image_alt_2']; ?>"
+                    <a href="demo-shop-5-product-details.html" title="Product Name"
+                      class="product-image">
+                      <img src="img/demos/shop/products/product1.jpg" alt="Product Name">
+                      <img src="img/demos/shop/products/product1-2.jpg" alt="Product Name"
                         class="product-hover-image">
                     </a>
 
-                    <!-- <a href="#" class="product-quickview">
+                    <a href="#" class="product-quickview">
                       <i class="fa fa-share-square-o"></i>
                       <span>Quick View</span>
-                    </a> -->
-                    <!-- <div class="product-label"><span class="discount">-10%</span></div> -->
-                    <!-- <div class="product-label"><span class="new">New</span></div> -->
+                    </a>
+                    <div class="product-label"><span class="discount">-10%</span></div>
+                    <div class="product-label"><span class="new">New</span></div>
                   </figure>
                   <div class="product-details-area">
-                    <h2 class="product-name"><a href="<?php echo base_url('product-details/'.$products['product_slug']); ?>" title="<?php echo $products['product_name']; ?>"><?php echo $products['product_name']; ?></a></h2>
-                    <!-- <div class="product-ratings">
+                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
+                        title="Product Name">Noa Sheer Blouse</a></h2>
+                    <div class="product-ratings">
                       <div class="ratings-box">
                         <div class="rating" style="width:60%"></div>
                       </div>
-                    </div> -->
+                    </div>
 
                     <div class="product-price-box">
-                      <!-- <span class="old-price">$99.00</span> -->
-                      <span class="product-price"><?php echo CURRENCY_SYMBOL. " ".$products['price']; ?></span>
+                      <span class="old-price">$99.00</span>
+                      <span class="product-price">$89.00</span>
                     </div>
 
                     <div class="product-actions">
@@ -123,14 +93,145 @@
                         <i class="fa fa-shopping-cart"></i>
                         <span>Add to Cart</span>
                       </a>
-                      <!-- <a href="#" class="comparelink" title="Add to Compare">
+                      <a href="#" class="comparelink" title="Add to Compare">
                         <i class="glyphicon glyphicon-signal"></i>
-                      </a> -->
+                      </a>
                     </div>
                   </div>
                 </div>
               </li>
-              <?php $i++; } } ?>
+
+              <li>
+                <div class="product">
+                  <figure class="product-image-area">
+                    <a href="demo-shop-5-product-details.html" title="Product Name"
+                      class="product-image">
+                      <img src="img/demos/shop/products/product2.jpg" alt="Product Name">
+                      <img src="img/demos/shop/products/product2-2.jpg" alt="Product Name"
+                        class="product-hover-image">
+                    </a>
+
+                    <a href="#" class="product-quickview">
+                      <i class="fa fa-share-square-o"></i>
+                      <span>Quick View</span>
+                    </a>
+                    <div class="product-label"><span class="discount">-25%</span></div>
+                  </figure>
+                  <div class="product-details-area">
+                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
+                        title="Product Name">Women Fashion Blouse</a></h2>
+                    <div class="product-ratings">
+                      <div class="ratings-box">
+                        <div class="rating" style="width:0%"></div>
+                      </div>
+                    </div>
+
+                    <div class="product-price-box">
+                      <span class="old-price">$120.00</span>
+                      <span class="product-price">$90.00</span>
+                    </div>
+
+                    <div class="product-actions">
+                      <a href="#" class="addtowishlist" title="Add to Wishlist">
+                        <i class="fa fa-heart"></i>
+                      </a>
+                      <a href="#" class="addtocart" title="Add to Cart">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Add to Cart</span>
+                      </a>
+                      <a href="#" class="comparelink" title="Add to Compare">
+                        <i class="glyphicon glyphicon-signal"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="product">
+                  <figure class="product-image-area">
+                    <a href="demo-shop-5-product-details.html" title="Product Name"
+                      class="product-image">
+                      <img src="img/demos/shop/products/product3.jpg" alt="Product Name">
+                    </a>
+
+                    <a href="#" class="product-quickview">
+                      <i class="fa fa-share-square-o"></i>
+                      <span>Quick View</span>
+                    </a>
+                  </figure>
+                  <div class="product-details-area">
+                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
+                        title="Product Name">Fashion Dress</a></h2>
+                    <div class="product-ratings">
+                      <div class="ratings-box">
+                        <div class="rating" style="width:60%"></div>
+                      </div>
+                    </div>
+
+                    <div class="product-price-box">
+                      <span class="product-price">$70.00</span>
+                    </div>
+
+                    <div class="product-actions">
+                      <a href="#" class="addtowishlist" title="Add to Wishlist">
+                        <i class="fa fa-heart"></i>
+                      </a>
+                      <a href="#" class="addtocart" title="Add to Cart">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Add to Cart</span>
+                      </a>
+                      <a href="#" class="comparelink" title="Add to Compare">
+                        <i class="glyphicon glyphicon-signal"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
+
+              <li>
+                <div class="product">
+                  <figure class="product-image-area">
+                    <a href="demo-shop-5-product-details.html" title="Product Name"
+                      class="product-image">
+                      <img src="img/demos/shop/products/product4.jpg" alt="Product Name">
+                    </a>
+
+                    <a href="#" class="product-quickview">
+                      <i class="fa fa-share-square-o"></i>
+                      <span>Quick View</span>
+                    </a>
+                    <div class="product-label"><span class="discount">-20%</span></div>
+                  </figure>
+                  <div class="product-details-area">
+                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
+                        title="Product Name">Fashion Sweater</a></h2>
+                    <div class="product-ratings">
+                      <div class="ratings-box">
+                        <div class="rating" style="width:80%"></div>
+                      </div>
+                    </div>
+
+                    <div class="product-price-box">
+                      <span class="old-price">$100.00</span>
+                      <span class="product-price">$90.00</span>
+                    </div>
+
+                    <div class="product-actions">
+                      <a href="#" class="addtowishlist" title="Add to Wishlist">
+                        <i class="fa fa-heart"></i>
+                      </a>
+                      <a href="#" class="addtocart" title="Add to Cart">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span>Add to Cart</span>
+                      </a>
+                      <a href="#" class="comparelink" title="Add to Compare">
+                        <i class="glyphicon glyphicon-signal"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </li>
 
               
             </ul>
@@ -174,7 +275,7 @@
                       <?php 
                             if(!empty($isActiveCategories)){
                             foreach($isActiveCategories as $activeCategory){ ?>
-                      <li><a href="<?php echo base_url('categories/'.$activeCategory->category_slug); ?>"><?php echo $activeCategory->category_name; ?></a></li>
+                      <li><a href="<?php echo $activeCategory->category_slug; ?>"><?php echo $activeCategory->category_name; ?></a></li>
                       <?php } } ?>
                     </ul>
                   </div>

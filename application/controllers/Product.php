@@ -9,13 +9,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Controller   :Giver 	 
  */
 
-class Subcategory extends CI_Controller{
+class Product extends CI_Controller{
 
 	function __construct() {
 		parent::__construct();
-		$this->table = 'tbl_sub_category';        
-		$this->load->model('Subcategory_model');
+		$this->table = 'tbl_products';        
+		$this->load->model('Product_model');
 		$this->load->model('Category_model');
+		$this->load->model('Subcategory_model');
 		$this->load->model('Home_model');
 		$this->controller = $this->router->fetch_class();
 		$this->load->library("pagination");
@@ -28,10 +29,10 @@ class Subcategory extends CI_Controller{
 		}
 		$data['controller'] = $this->controller;
 
-		$data['allsubcategory'] = $this->Subcategory_model->allsubcategory();
+		$data['allproducts'] = $this->Product_model->allproducts();
 		$this->load->view('template/admin_header');
 		$this->load->view('template/admin_left');
-		$this->load->view('subcategory/index', $data);
+		$this->load->view('product/index', $data);
 		$this->load->view('template/admin_footer');
 	}
 
@@ -73,14 +74,16 @@ class Subcategory extends CI_Controller{
 		if (!$this->session->userdata('logged_in')) {
 			redirect('user/login');
 		}
+		$subCatId = getSubCatIdByProductId($id);
 		$data['categoryDataArr'] = getAllCategory();
+		$data['subCategoryDataArr'] = getAllSubCategory($subCatId);
 		// $data['packageDataArr'] = getAllPackages();
-		$data['details'] = $this->Subcategory_model->subcategoryDetails($id);
+		$data['details'] = $this->Product_model->productDetails($id);
 		$data['controller'] = $this->controller;
 
 		$this->load->view('template/admin_header');
 		$this->load->view('template/admin_left');
-		$this->load->view('subcategory/edit', $data);
+		$this->load->view('product/edit', $data);
 		$this->load->view('template/admin_footer');
 	}
 
@@ -100,35 +103,44 @@ class Subcategory extends CI_Controller{
 	}
 
 	/* Update workout type form data by workout type ID */
-	public function update_subcategory(){
+	public function update_product(){
 		if (!$this->session->userdata('logged_in')) {
 			redirect('user/login');
 		}
 
 		$data['controller'] = $this->controller;
-		$sub_category_id = $this->input->post('sub_category_id');
-		$data['details'] = $this->Subcategory_model->subcategoryDetails($sub_category_id);
+		$product_id = $this->input->post('product_id');
+		$data['details'] = $this->Product_model->productDetails($product_id);
 
 		$this->form_validation->set_error_delimiters('<p class="help-block" style="color:red;">', '</p>');
 		// $this->form_validation->set_rules('category_type', 'Category Type', "trim|required");
-		$this->form_validation->set_rules('category_id', 'Category Name', 'trim|required');
-		$this->form_validation->set_rules('sub_category_name', 'Sub Category Name', 'trim|required|callback_name_check');
-		// $this->form_validation->set_rules('offer_price', 'Offer Price', 'trim|required');
-		$this->form_validation->set_rules('status', 'Status', 'trim|required|integer');			
-		// $oldImage = $this->input->post('image_file_name');
-		// $oldImage_2 = $this->input->post('image_file_name_2');
-		// $oldImage_3 = $this->input->post('image_file_name_3');
-		// $oldImage_4 = $this->input->post('image_file_name_4');
+
+		$this->form_validation->set_rules('category_id', 'Category Name', "trim|required");
+		$this->form_validation->set_rules('sub_category_id', 'Sub Category Name', "trim|required");
+		$this->form_validation->set_rules('product_name', 'Product Name', "trim|required");
+		$this->form_validation->set_rules('product_code', 'Product Code', "trim|required");
+		$this->form_validation->set_rules('quantity', 'Quantity', "trim|required");
+		$this->form_validation->set_rules('wholesale_price', 'Wholesale Price', "trim|required");
+		$this->form_validation->set_rules('retailer_price', 'Retailer Price', "trim|required");
+		$this->form_validation->set_rules('price', 'Traider Price', "trim|required");
+		$this->form_validation->set_rules('status', 'Status', 'trim|required|integer');
+			$oldImage = $this->input->post('image_file_name');
+			$oldImage_1 = $this->input->post('image_file_name_1');
+			$oldImage_2 = $this->input->post('image_file_name_2');
+			$oldImage_3 = $this->input->post('image_file_name_3');
+			$oldImage_4 = $this->input->post('image_file_name_4');
 		// $oldImage_5 = $this->input->post('image_file_name_5');
 		// $banneroldImage = $this->input->post('banner_image_file_name');
 
 		if($this->form_validation->run() == FALSE ){ 
 			$data['controller'] = $this->controller;
-			$data['details'] = $this->Service_model->serviceDetails($service_id);
+			$data['categoryDataArr'] = getAllCategory();
+			$data['subCategoryDataArr'] = getAllSubCategories();
+			$data['details'] = $this->Product_model->productDetails($product_id);
 
 			$this->load->view('template/admin_header');
 			$this->load->view('template/admin_left');
-			$this->load->view('subcategory/edit', $data);
+			$this->load->view('product/edit', $data);
 			$this->load->view('template/admin_footer');
 		} else {
 			$meta_title = $this->input->post('meta_title');
@@ -137,11 +149,11 @@ class Subcategory extends CI_Controller{
 			$h1_tag = $this->input->post('h1_tag');
 			$h2_tag = $this->input->post('h2_tag');
 			$h3_tag = $this->input->post('h3_tag');
-			// $image_alt_1 = $this->input->post('image_alt_1');
-			// $image_alt_2 = $this->input->post('image_alt_2');
-			// $image_alt_3 = $this->input->post('image_alt_3');
-			// $image_alt_4 = $this->input->post('image_alt_4');
-			// $image_alt_5 = $this->input->post('image_alt_5');
+			$image_alt_1 = $this->input->post('image_alt_1');
+			$image_alt_2 = $this->input->post('image_alt_2');
+			$image_alt_3 = $this->input->post('image_alt_3');
+			$image_alt_4 = $this->input->post('image_alt_4');
+			$image_alt_5 = $this->input->post('image_alt_5');
 			$robots = $this->input->post('robots');
 			$revisit_after = $this->input->post('revisit_after');
 			$og_local = $this->input->post('og_local');
@@ -165,11 +177,11 @@ class Subcategory extends CI_Controller{
 				'h1_tag' => $h1_tag,
 				'h2_tag' => $h2_tag,
 				'h3_tag' => $h3_tag,
-				// 'image_alt_1' => $image_alt_1,
-				// 'image_alt_2' => $image_alt_2,
-				// 'image_alt_3' => $image_alt_3,
-				// 'image_alt_4' => $image_alt_4,
-				// 'image_alt_5' => $image_alt_5,
+				'image_alt_1' => $image_alt_1,
+				'image_alt_2' => $image_alt_2,
+				'image_alt_3' => $image_alt_3,
+				'image_alt_4' => $image_alt_4,
+				'image_alt_5' => $image_alt_5,
 				'robots' => $robots,
 				'revisit_after' => $revisit_after,
 				'og_local' => $og_local,
@@ -187,390 +199,150 @@ class Subcategory extends CI_Controller{
 				'geo_position' => $geo_position,
 				'icbm' => $icbm,
 				'category_id' => $this->input->post('category_id'),
-				'sub_category_name' => $this->input->post('sub_category_name'),
-				// 'price' => $this->input->post('price'),
-				// 'offer_price' => $this->input->post('offer_price'),
+				'sub_cat_id' => $this->input->post('sub_category_id'),
+				'product_name' => $this->input->post('product_name'),
+				'product_code' => $this->input->post('product_code'),
+				'quantity' => $this->input->post('quantity'),
+				'wholesale_price' => $this->input->post('wholesale_price'),
+				'retailer_price' => $this->input->post('retailer_price'),
+				'price' => $this->input->post('price'),
 				'page_title' => $this->input->post('page_title'),
 				'page_slug' => $this->input->post('page_slug'),
-				'sub_category_slug' => $this->input->post('sub_category_slug'),
+				'product_slug' => $this->input->post('product_slug'),
 				'description' => $this->input->post('description'),
-				// 'long_description' => $this->input->post('long_description'),
+				'long_description' => $this->input->post('long_description'),
 				'status' => $this->input->post('status'),
 				// 'updatedOn' => date("Y-m-d h:i:s"),
 			);
 
-			// $uploads_dir = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/";
-			// $image = $_FILES['image_file'];
-			// $image_2 = $_FILES['image_file_2'];
-			// $image_3 = $_FILES['image_file_3'];
-			// $image_4 = $_FILES['image_file_4'];
+			$uploads_dir = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/products/";
+			$image = $_FILES['image_file'];
+			$image_1 = $_FILES['image_file_1'];
+			$image_2 = $_FILES['image_file_2'];
+			$image_3 = $_FILES['image_file_3'];
+			$image_4 = $_FILES['image_file_4'];
 			// $image_5 = $_FILES['image_file_5'];
 			// $banner_image = $_FILES['banner_image_file'];
 
-			// if (!empty($image['name']) && $image['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
+			if (!empty($image['name']) && $image['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
 
-			// 	$tmp_name    = $image["tmp_name"];
-			// 	$imgName     = pathinfo($image['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
-				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$data['image'] = $newImgName;
-			// 	}
-
-			// 	$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage;
-			// 	if (file_exists($filename)) {
-			// 	    unlink($filename);
-			// 	}
-			// }
-
-			// if (!empty($image_2['name']) && $image_2['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image_2["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
-
-			// 	$tmp_name    = $image_2["tmp_name"];
-			// 	$imgName     = pathinfo($image_2['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_2['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
-				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$data['image_2'] = $newImgName;
-			// 	}
-
-			// 	$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_2;
-			// 	if (file_exists($filename)) {
-			// 	    unlink($filename);
-			// 	}
-			// }
-
-			// if (!empty($image_3['name']) && $image_3['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image_3["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
-
-			// 	$tmp_name    = $image_3["tmp_name"];
-			// 	$imgName     = pathinfo($image_3['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_3['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
-				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$data['image_3'] = $newImgName;
-			// 	}
-
-			// 	$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_3;
-			// 	if (file_exists($filename)) {
-			// 	    unlink($filename);
-			// 	}
-			// }
-
-			// if (!empty($image_4['name']) && $image_4['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image_4["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
-
-			// 	$tmp_name    = $image_4["tmp_name"];
-			// 	$imgName     = pathinfo($image_4['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_4['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
-				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$data['image_4'] = $newImgName;
-			// 	}
-
-			// 	$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_4;
-			// 	if (file_exists($filename)) {
-			// 	    unlink($filename);
-			// 	}
-			// }
-
-			// if (!empty($image_5['name']) && $image_5['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image_5["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
-
-			// 	$tmp_name    = $image_5["tmp_name"];
-			// 	$imgName     = pathinfo($image_5['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_5['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
-				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$data['image_5'] = $newImgName;
-			// 	}
-
-			// 	$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_5;
-			// 	if (file_exists($filename)) {
-			// 	    unlink($filename);
-			// 	}
-			// }
-
-
-
-			/* if(!empty($image['name']) && $image['error'] <= 0){
 				$tmp_name    = $image["tmp_name"];
-
 				$imgName     = pathinfo($image['name']);
 				$ext         = strtolower($imgName['extension']);
 				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image['name']), 0, 50);
 				$newImgName  = $newImgName . time() . "." . $ext;
-				$uploadPath = $uploads_dir . '/' . $newImgName;
 				
-				if (move_uploaded_file($tmp_name, $uploadPath)) {
-					$newFile = $uploads_dir .'/'. $newImgName;
-
-					$source_properties = getimagesize($uploadPath);
-					$image_type = $source_properties[2];
-
-					if( $image_type == IMAGETYPE_JPEG ) {
-						$uploadPath = imagecreatefromjpeg($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagejpeg($uploadPath, $newFile);
-					} else if( $image_type == IMAGETYPE_GIF )  {  
-						$uploadPath = imagecreatefromgif($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagegif($uploadPath, $newFile);
-					} elseif( $image_type == IMAGETYPE_PNG )  {  
-						$uploadPath = imagecreatefrompng($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagepng($uploadPath, $newFile);
-					}
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
 					$data['image'] = $newImgName;
 				}
 
-				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage;
+				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/products/".$oldImage;
 				if (file_exists($filename)) {
 				    unlink($filename);
 				}
 			}
 
 
-			if(!empty($image_2['name']) && $image_2['error'] <= 0){
-				$tmp_name    = $image_2["tmp_name"];
+			if (!empty($image_1['name']) && $image_1['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_1["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
 
+				$tmp_name    = $image_1["tmp_name"];
+				$imgName     = pathinfo($image_1['name']);
+				$ext         = strtolower($imgName['extension']);
+				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_1['name']), 0, 50);
+				$newImgName  = $newImgName . time() . "." . $ext;
+				
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
+					$data['image_1'] = $newImgName;
+				}
+
+				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/products/".$oldImage_1;
+				if (file_exists($filename)) {
+				    unlink($filename);
+				}
+			}
+
+
+			if (!empty($image_2['name']) && $image_2['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_2["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
+
+				$tmp_name    = $image_2["tmp_name"];
 				$imgName     = pathinfo($image_2['name']);
 				$ext         = strtolower($imgName['extension']);
 				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_2['name']), 0, 50);
 				$newImgName  = $newImgName . time() . "." . $ext;
-				$uploadPath = $uploads_dir . '/' . $newImgName;
 				
-				if (move_uploaded_file($tmp_name, $uploadPath)) {
-					$newFile = $uploads_dir .'/'. $newImgName;
-
-					$source_properties = getimagesize($uploadPath);
-					$image_type = $source_properties[2];
-
-					if( $image_type == IMAGETYPE_JPEG ) {
-						$uploadPath = imagecreatefromjpeg($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagejpeg($uploadPath, $newFile);
-					} else if( $image_type == IMAGETYPE_GIF )  {  
-						$uploadPath = imagecreatefromgif($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagegif($uploadPath, $newFile);
-					} elseif( $image_type == IMAGETYPE_PNG )  {  
-						$uploadPath = imagecreatefrompng($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagepng($uploadPath, $newFile);
-					}
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
 					$data['image_2'] = $newImgName;
 				}
 
-				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_2;
+				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/products/".$oldImage_2;
 				if (file_exists($filename)) {
 				    unlink($filename);
 				}
 			}
 
 
-			if(!empty($image_3['name']) && $image_3['error'] <= 0){
-				$tmp_name    = $image_3["tmp_name"];
+			if (!empty($image_3['name']) && $image_3['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_3["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
 
+				$tmp_name    = $image_3["tmp_name"];
 				$imgName     = pathinfo($image_3['name']);
 				$ext         = strtolower($imgName['extension']);
 				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_3['name']), 0, 50);
 				$newImgName  = $newImgName . time() . "." . $ext;
-				$uploadPath = $uploads_dir . '/' . $newImgName;
 				
-				if (move_uploaded_file($tmp_name, $uploadPath)) {
-					$newFile = $uploads_dir .'/'. $newImgName;
-
-					$source_properties = getimagesize($uploadPath);
-					$image_type = $source_properties[2];
-
-					if( $image_type == IMAGETYPE_JPEG ) {
-						$uploadPath = imagecreatefromjpeg($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagejpeg($uploadPath, $newFile);
-					} else if( $image_type == IMAGETYPE_GIF )  {  
-						$uploadPath = imagecreatefromgif($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagegif($uploadPath, $newFile);
-					} elseif( $image_type == IMAGETYPE_PNG )  {  
-						$uploadPath = imagecreatefrompng($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagepng($uploadPath, $newFile);
-					}
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
 					$data['image_3'] = $newImgName;
 				}
 
-				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_3;
+				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/products/".$oldImage_3;
 				if (file_exists($filename)) {
 				    unlink($filename);
 				}
 			}
 
-			if(!empty($image_4['name']) && $image_4['error'] <= 0){
-				$tmp_name    = $image_4["tmp_name"];
 
+			if (!empty($image_4['name']) && $image_4['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_4["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
+
+				$tmp_name    = $image_4["tmp_name"];
 				$imgName     = pathinfo($image_4['name']);
 				$ext         = strtolower($imgName['extension']);
 				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_4['name']), 0, 50);
 				$newImgName  = $newImgName . time() . "." . $ext;
-				$uploadPath = $uploads_dir . '/' . $newImgName;
 				
-				if (move_uploaded_file($tmp_name, $uploadPath)) {
-					$newFile = $uploads_dir .'/'. $newImgName;
-
-					$source_properties = getimagesize($uploadPath);
-					$image_type = $source_properties[2];
-
-					if( $image_type == IMAGETYPE_JPEG ) {
-						$uploadPath = imagecreatefromjpeg($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagejpeg($uploadPath, $newFile);
-					} else if( $image_type == IMAGETYPE_GIF )  {  
-						$uploadPath = imagecreatefromgif($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagegif($uploadPath, $newFile);
-					} elseif( $image_type == IMAGETYPE_PNG )  {  
-						$uploadPath = imagecreatefrompng($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagepng($uploadPath, $newFile);
-					}
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
 					$data['image_4'] = $newImgName;
 				}
 
-				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_4;
+				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/products/".$oldImage_4;
 				if (file_exists($filename)) {
 				    unlink($filename);
 				}
 			}
 
-			if(!empty($image_5['name']) && $image_5['error'] <= 0){
-				$tmp_name    = $image_5["tmp_name"];
-
-				$imgName     = pathinfo($image_5['name']);
-				$ext         = strtolower($imgName['extension']);
-				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_5['name']), 0, 50);
-				$newImgName  = $newImgName . time() . "." . $ext;
-				$uploadPath = $uploads_dir . '/' . $newImgName;
-				
-				if (move_uploaded_file($tmp_name, $uploadPath)) {
-					$newFile = $uploads_dir .'/'. $newImgName;
-
-					$source_properties = getimagesize($uploadPath);
-					$image_type = $source_properties[2];
-
-					if( $image_type == IMAGETYPE_JPEG ) {
-						$uploadPath = imagecreatefromjpeg($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagejpeg($uploadPath, $newFile);
-					} else if( $image_type == IMAGETYPE_GIF )  {  
-						$uploadPath = imagecreatefromgif($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagegif($uploadPath, $newFile);
-					} elseif( $image_type == IMAGETYPE_PNG )  {  
-						$uploadPath = imagecreatefrompng($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],280,280);
-						$newImageName = imagepng($uploadPath, $newFile);
-					}
-					$data['image_5'] = $newImgName;
-				}
-
-				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage_5;
-				if (file_exists($filename)) {
-				    unlink($filename);
-				}
-			} */
-
-
-			// if (!empty($banner_image['name']) && $banner_image['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($banner_image["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
-
-			// 	$tmp_name    = $banner_image["tmp_name"];
-			// 	$imgName     = pathinfo($banner_image['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$banner_image['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
-				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$data['service_banner_image'] = $newImgName;
-			// 	}
-
-			// 	$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$banneroldImage;
-			// 	if (file_exists($filename)) {
-			// 	    unlink($filename);
-			// 	}
-			// }
-
-			/* if(!empty($banner_image['name']) && $banner_image['error'] <= 0){
-				$tmp_name    = $banner_image["tmp_name"];
-
-				$imgName     = pathinfo($banner_image['name']);
-				$ext         = strtolower($imgName['extension']);
-				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$banner_image['name']), 0, 50);
-				$newImgName  = $newImgName . time() . "." . $ext;
-				$uploadPath = $uploads_dir . '/' . $newImgName;
-				
-				if (move_uploaded_file($tmp_name, $uploadPath)) {
-					$newFile = $uploads_dir .'/'. $newImgName;
-
-					$source_properties = getimagesize($uploadPath);
-					$image_type = $source_properties[2];
-
-					if( $image_type == IMAGETYPE_JPEG ) {
-						$uploadPath = imagecreatefromjpeg($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],1350,490);
-						$newImageName = imagejpeg($uploadPath, $newFile);
-					} else if( $image_type == IMAGETYPE_GIF )  {  
-						$uploadPath = imagecreatefromgif($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],1350,490);
-						$newImageName = imagegif($uploadPath, $newFile);
-					} elseif( $image_type == IMAGETYPE_PNG )  {  
-						$uploadPath = imagecreatefrompng($uploadPath); 
-						$uploadPath = fn_resize($uploadPath,$source_properties[0],$source_properties[1],1350,490);
-						$newImageName = imagepng($uploadPath, $newFile);
-					}
-					$data['service_banner_image'] = $newImgName;
-				}
-
-				$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/".$oldImage;
-				if (file_exists($filename)) {
-				    unlink($filename);
-				}
-			} */
-
-// echo "<pre>"; print_r($data); die;
-			if($this->db->update($this->table, $data, array('id' => $sub_category_id))) {
-				$this->session->set_flashdata('response', '<div class="alert alert-success">Sub Category Updated Successfully</div>');
+			// echo "<pre>"; print_r($data); die;
+			if($this->db->update($this->table, $data, array('id' => $product_id))) {
+				$this->session->set_flashdata('response', '<div class="alert alert-success">Product Updated Successfully</div>');
 			} else {
-				$this->session->set_flashdata('response', '<div class="alert alert-danger">Failed to updated Sub Category.</div>');
+				$this->session->set_flashdata('response', '<div class="alert alert-danger">Failed to updated Product.</div>');
 			}   
 
 			redirect($this->controller, 'refresh');
@@ -677,7 +449,7 @@ class Subcategory extends CI_Controller{
 
 		$statusid = $this->input->post('statusid');
 		$controllername = $this->input->post('controllername');
-//	$displayid = $this->input->post('displayid');
+		//	$displayid = $this->input->post('displayid');
 
 		if($this->input->post('statusvalue')) {
 			$statusVal = 0;
@@ -704,7 +476,7 @@ class Subcategory extends CI_Controller{
 
 		$statusid = $this->input->post('statusid');
 		$controllername = $this->input->post('controllername');
-//	$displayid = $this->input->post('displayid');
+		//	$displayid = $this->input->post('displayid');
 
 		if($this->input->post('statusvalue')) {
 			$statusVal = 0;
@@ -723,22 +495,23 @@ class Subcategory extends CI_Controller{
 	}
 
 	/* Open add new workout type form */
-	public function  addsubcategory(){
+	public function  addproduct(){
 		if (!$this->session->userdata('logged_in')) {
 			redirect('user/login');
 		}
 		// $data['productCode'] = generateProductCode(6);
 		$data['categoryDataArr'] = getAllCategory();
+		$data['subCategoryDataArr'] = getAllSubCategories();
 		$data['controller'] = $this->controller;
 
 		$this->load->view('template/admin_header');
 		$this->load->view('template/admin_left');
-		$this->load->view('subcategory/add_subcategory', $data);
+		$this->load->view('product/add_product', $data);
 		$this->load->view('template/admin_footer');
 	}
 
 	/* Add new workout type form data with validation */
-	public function add_newsubcategory(){
+	public function add_newproduct(){
 		if (!$this->session->userdata('logged_in')) {
 			redirect('user/login');
 		}
@@ -746,14 +519,20 @@ class Subcategory extends CI_Controller{
 		$this->form_validation->set_error_delimiters('<p class="help-block" style="color:red;">', '</p>');
 		// $this->form_validation->set_rules('category_type', 'Category Type', "trim|required");
 		$this->form_validation->set_rules('category_id', 'Category Name', "trim|required");
-		$this->form_validation->set_rules('sub_category_name', 'Subcategory Name', "trim|required");
-		// $this->form_validation->set_rules('offer_price', 'Offer Price', "trim|required");
+		$this->form_validation->set_rules('sub_category_id', 'Sub Category Name', "trim|required");
+		$this->form_validation->set_rules('product_name', 'Product Name', "trim|required");
+		$this->form_validation->set_rules('product_code', 'Product Code', "trim|required");
+		$this->form_validation->set_rules('quantity', 'Quantity', "trim|required");
+		$this->form_validation->set_rules('wholesale_price', 'Wholesale Price', "trim|required");
+		$this->form_validation->set_rules('retailer_price', 'Retailer Price', "trim|required");
+		$this->form_validation->set_rules('price', 'Traider Price', "trim|required");
 		$this->form_validation->set_rules('status', 'Status', 'trim|required|integer');
 		// $cType = $this->input->post('category_type');
 		$cType = 2;
 		if($this->form_validation->run() == FALSE ){
 			$data['controller'] = $this->controller;
-
+			$data['categoryDataArr'] = getAllCategory();
+			$data['subCategoryDataArr'] = getAllSubCategories();
 			$this->load->view('template/admin_header');
 			$this->load->view('template/admin_left');
 			$this->load->view('subcategory/add_subcategory', $data);
@@ -789,25 +568,29 @@ class Subcategory extends CI_Controller{
 
 			$insert_data = array(
 				'category_id' => $this->input->post('category_id'),
-				'sub_category_name' => $this->input->post('sub_category_name'),
-				// 'price' => $this->input->post('price'),
-				// 'offer_price' => $this->input->post('offer_price'),
+				'sub_cat_id' => $this->input->post('sub_category_id'),
+				'product_name' => $this->input->post('product_name'),
+				'product_code' => $this->input->post('product_code'),
+				'wholesale_price' => $this->input->post('wholesale_price'),
+				'retailer_price' => $this->input->post('retailer_price'),
+				'price' => $this->input->post('price'),
+				'quantity' => $this->input->post('quantity'),
 				'page_title' => $this->input->post('page_title'),
 				'page_slug' => $this->input->post('page_slug'),
-				'sub_category_slug' => $this->input->post('sub_category_slug'),
+				'product_slug' => $this->input->post('product_slug'),
 				'description' => $this->input->post('description'),
-				// 'long_description' => $this->input->post('long_description'),
+				'long_description' => $this->input->post('long_description'),
 				'meta_title' => $meta_title,
 				'meta_description' => $meta_description,
 				'meta_keywords' => $meta_keywords,
 				'h1_tag' => $h1_tag,
 				'h2_tag' => $h2_tag,
 				'h3_tag' => $h3_tag,
-				// 'image_alt_1' => $image_alt_1,
-				// 'image_alt_2' => $image_alt_2,
-				// 'image_alt_3' => $image_alt_3,
-				// 'image_alt_4' => $image_alt_4,
-				// 'image_alt_5' => $image_alt_5,
+				'image_alt_1' => $image_alt_1,
+				'image_alt_2' => $image_alt_2,
+				'image_alt_3' => $image_alt_3,
+				'image_alt_4' => $image_alt_4,
+				'image_alt_5' => $image_alt_5,
 				'robots' => $robots,
 				'revisit_after' => $revisit_after,
 				'og_local' => $og_local,
@@ -827,81 +610,99 @@ class Subcategory extends CI_Controller{
 				'status' => $this->input->post('status'),
 			);
 			
-			$uploads_dir = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/services/";
+			$uploads_dir = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/products/";
 			$image = $_FILES['image_file'];
+			$image_1 = $_FILES['image_file_1'];
 			$image_2 = $_FILES['image_file_2'];
 			$image_3 = $_FILES['image_file_3'];
 			$image_4 = $_FILES['image_file_4'];
 			$image_5 = $_FILES['image_file_5'];
-			$bannerimage = $_FILES['banner_image_file'];
+			// $bannerimage = $_FILES['banner_image_file'];
 
-			// if (!empty($image['name']) && $image['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
+			if (!empty($image['name']) && $image['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
 
-			// 	$tmp_name    = $image["tmp_name"];
-			// 	$imgName     = pathinfo($image['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
+				$tmp_name    = $image["tmp_name"];
+				$imgName     = pathinfo($image['name']);
+				$ext         = strtolower($imgName['extension']);
+				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image['name']), 0, 50);
+				$newImgName  = $newImgName . time() . "." . $ext;
 				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$insert_data['image'] = $newImgName;
-			// 	}
-			// }
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
+					$insert_data['image'] = $newImgName;
+				}
+			}
 
-			// if (!empty($image_2['name']) && $image_2['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image_2["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
+			if (!empty($image_1['name']) && $image_1['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_1["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
 
-			// 	$tmp_name    = $image_2["tmp_name"];
-			// 	$imgName     = pathinfo($image_2['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_2['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
+				$tmp_name    = $image_1["tmp_name"];
+				$imgName     = pathinfo($image_1['name']);
+				$ext         = strtolower($imgName['extension']);
+				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_1['name']), 0, 50);
+				$newImgName  = $newImgName . time() . "." . $ext;
 				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$insert_data['image_2'] = $newImgName;
-			// 	}
-			// }
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
+					$insert_data['image_1'] = $newImgName;
+				}
+			}
 
-			// if (!empty($image_3['name']) && $image_3['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image_3["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
+			if (!empty($image_2['name']) && $image_2['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_2["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
 
-			// 	$tmp_name    = $image_3["tmp_name"];
-			// 	$imgName     = pathinfo($image_3['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_3['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
+				$tmp_name    = $image_2["tmp_name"];
+				$imgName     = pathinfo($image_2['name']);
+				$ext         = strtolower($imgName['extension']);
+				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_2['name']), 0, 50);
+				$newImgName  = $newImgName . time() . "." . $ext;
 				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$insert_data['image_3'] = $newImgName;
-			// 	}
-			// }
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
+					$insert_data['image_2'] = $newImgName;
+				}
+			}
 
-			// if (!empty($image_4['name']) && $image_4['error'] <= 0) {
-			// 	// Get Image Dimension
-			//     $fileinfo = @getimagesize($image_4["tmp_name"]);
-			//     $width = $fileinfo[0];
-			//     $height = $fileinfo[1];
+			if (!empty($image_3['name']) && $image_3['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_3["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
 
-			// 	$tmp_name    = $image_4["tmp_name"];
-			// 	$imgName     = pathinfo($image_4['name']);
-			// 	$ext         = strtolower($imgName['extension']);
-			// 	$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_4['name']), 0, 50);
-			// 	$newImgName  = $newImgName . time() . "." . $ext;
+				$tmp_name    = $image_3["tmp_name"];
+				$imgName     = pathinfo($image_3['name']);
+				$ext         = strtolower($imgName['extension']);
+				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_3['name']), 0, 50);
+				$newImgName  = $newImgName . time() . "." . $ext;
 				
-			// 	if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
-			// 		$insert_data['image_4'] = $newImgName;
-			// 	}
-			// }
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
+					$insert_data['image_3'] = $newImgName;
+				}
+			}
+
+			if (!empty($image_4['name']) && $image_4['error'] <= 0) {
+				// Get Image Dimension
+			    $fileinfo = @getimagesize($image_4["tmp_name"]);
+			    $width = $fileinfo[0];
+			    $height = $fileinfo[1];
+
+				$tmp_name    = $image_4["tmp_name"];
+				$imgName     = pathinfo($image_4['name']);
+				$ext         = strtolower($imgName['extension']);
+				$newImgName  = substr(preg_replace('/[^a-zA-Z0-9\._]/', '_',$image_4['name']), 0, 50);
+				$newImgName  = $newImgName . time() . "." . $ext;
+				
+				if (move_uploaded_file($tmp_name, $uploads_dir . '/' . $newImgName)) {
+					$insert_data['image_4'] = $newImgName;
+				}
+			}
 
 			// if (!empty($image_5['name']) && $image_5['error'] <= 0) {
 			// 	// Get Image Dimension
@@ -1131,7 +932,7 @@ class Subcategory extends CI_Controller{
 
 
 			
-echo "<pre>"; print_r($insert_data);
+			echo "<pre>"; print_r($insert_data);
 			if($this->db->insert($this->table, $insert_data)){
 				// $insert_id = $this->db->insert_id();
 				// $subcategoryArr = $this->SubCategory_model->subcategoryDetails($insert_id);
@@ -1140,7 +941,7 @@ echo "<pre>"; print_r($insert_data);
 				// 	'image' => $serviceArr['image'],
 				// );
 				// $this->db->insert("tbl_gallery", $insert_gallery_data);
-				$this->session->set_flashdata('response', '<div class="alert alert-success">Sub CategorySuccessfully Added</div>');
+				$this->session->set_flashdata('response', '<div class="alert alert-success">Product Successfully Added</div>');
 			} else {
 				$this->session->set_flashdata('response', '<div class="alert alert-danger">Failed to Add Sub Category.</div>');
 			}
@@ -1258,18 +1059,6 @@ echo "<pre>"; print_r($insert_data);
 
 /* Function Start For Front-End Code */
 
-public function getAllSubCategory(){
-	$id = $_POST['category_id'];
-	$subCategoryArr = getAllSubCategory($id);
-	$dataArr = '<option value="">Select Category</option>';
-	if(!empty($subCategoryArr)){
-		foreach($subCategoryArr as $subCategory){
-			$dataArr .= '<option value="'.$subCategory->id.'">'.$subCategory->sub_category_name.'</option>';
-		}
-	}
-	echo $dataArr;
-}
-
 /* Function for get service details start */
 	public function serviceDetail___($id){
 		$packageId = $this->uri->segment(3);
@@ -1290,25 +1079,60 @@ public function getAllSubCategory(){
 	}
 
 
-	public function serviceDetail($id){
-		$serviceId = $id;
-		$data['controller'] = $this->controller;
-		$data['serviceId'] = $serviceId;
-		$packageId = getPackageIdByServiceSlug($serviceId);
-		$data['packageId'] = $packageId;
-		// $data['allPackages'] = $this->Home_model->getAllPackages();
-		$data['footerContent'] = $this->Home_model->getPageData('footer_content');
-		$data['aboutCompany'] = $this->Home_model->getPageData('about-company');
-		$data['whyWeBest'] = $this->Home_model->getPageData('why_we_best');
-		$data['serviceDetails'] = $this->Service_model->getServiceDetails($serviceId);
-		$data['allPackageServices'] = $this->Package_model->getPackageServices($packageId);
+	public function product_detail($slug){
+		$data['isActiveCategories'] = getAllCategory();
+		// $serviceId = $id;
+		// $data['controller'] = $this->controller;
+		// $data['serviceId'] = $serviceId;
+		// $packageId = getDetailByProductSlug($serviceId);
+		// $data['packageId'] = $packageId;
+		// // $data['allPackages'] = $this->Home_model->getAllPackages();
+		// $data['footerContent'] = $this->Home_model->getPageData('footer_content');
+		// $data['aboutCompany'] = $this->Home_model->getPageData('about-company');
+		// $data['whyWeBest'] = $this->Home_model->getPageData('why_we_best');
+		$data['produictDetails'] = $this->Product_model->getProductDetails($slug);
+		// $data['allPackageServices'] = $this->Package_model->getPackageServices($packageId);
 
-		$this->load->view('template/front/inner-header', $data);
-		$this->load->view('service/service_detail', $data);
-		$this->load->view('template/front/book_appointment', $data);
+		$this->load->view('template/front/header', $data);
+		$this->load->view('product/product_detail', $data);
 		$this->load->view('template/front/footer', $data);
 	}
 /* Function for get service details end */
+
+
+/* Function for get user cart list start */
+	public function cart_list(){
+		$data['isActiveCategories'] = getAllCategory();
+		$data['controller'] = $this->controller;
+		$user_id = $this->session->userdata('front_logged_in')['id'];
+		// $data['allCartProducts'] = $this->Laundryprice_model->getUserCartProduct($user_id);
+		$this->load->view('template/front/header', $data);
+		$this->load->view('product/cart_list', $data);
+		$this->load->view('template/front/footer', $data);
+	}
+/* Function for get user cart list end */
+
+/* Function for get user cart list start */
+	public function wish_list(){
+		$data['isActiveCategories'] = getAllCategory();
+		$this->load->view('template/front/header', $data);
+		$this->load->view('product/wish_list', $data);
+		$this->load->view('template/front/footer', $data);
+	}
+/* Function for get user cart list end */
+
+/* Function for get user cart list start */
+	public function cart_checkout(){
+		$data['isActiveCategories'] = getAllCategory();
+		$data['controller'] = $this->controller;
+		$user_id = $this->session->userdata('front_logged_in')['id'];
+		// $data['billingArr'] = getUserBillingDetails($user_id);
+		// $data['subTotal'] = $this->Laundryprice_model->getUserCartSubTotal($user_id);
+		$this->load->view('template/front/header', $data);
+		$this->load->view('product/cart_checkout', $data);
+		$this->load->view('template/front/footer', $data);
+	}
+/* Function for get user cart list end */
 
 /* Function End For Front-End Code */	
 

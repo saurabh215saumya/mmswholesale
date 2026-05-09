@@ -104,18 +104,18 @@ class Banner extends CI_Controller{
 			$current_time = time();
 			$data = array(
 				'title' => $this->input->post('title'),
-				'description' => $this->input->post('description'),
+				// 'description' => $this->input->post('description'),
 				'meta_title' => $meta_title,
 				'meta_description' => $meta_description,
 				'meta_keywords' => $meta_keywords,
-				'h1_tag' => $h1_tag,
-				'h2_tag' => $h2_tag,
-				'h3_tag' => $h3_tag,
-				'image_alt_1' => $image_alt_1,
-				'image_alt_2' => $image_alt_2,
-				'image_alt_3' => $image_alt_3,
-				'image_alt_4' => $image_alt_4,
-				'image_alt_5' => $image_alt_5,
+				// 'h1_tag' => $h1_tag,
+				// 'h2_tag' => $h2_tag,
+				// 'h3_tag' => $h3_tag,
+				// 'image_alt_1' => $image_alt_1,
+				// 'image_alt_2' => $image_alt_2,
+				// 'image_alt_3' => $image_alt_3,
+				// 'image_alt_4' => $image_alt_4,
+				// 'image_alt_5' => $image_alt_5,
 				'robots' => $robots,
 				'revisit_after' => $revisit_after,
 				'og_local' => $og_local,
@@ -154,7 +154,7 @@ class Banner extends CI_Controller{
 					$data['image'] = $newImgName;
 				}
 
-				if ($width == "1920" && $height == "750") {
+				// if ($width == "1920" && $height == "750") {
 					if($this->db->update($this->table, $data, array('id' => $banner_id))) {
 						$filename = dirname($_SERVER["SCRIPT_FILENAME"])."/uploads/banners/".$oldImage;
 						if (file_exists($filename)) {
@@ -165,14 +165,14 @@ class Banner extends CI_Controller{
 						$this->session->set_flashdata('response', '<div class="alert alert-danger">Failed to updated banner.</div>');
 					}    
 					redirect($this->controller, 'refresh');
-				} else {
-					$this->session->set_flashdata('response', '<div class="alert alert-danger">Image dimension should be within 750*1920.</div>');
-			        // redirect($this->controller.'/addproduct', 'refresh');
-			        $this->load->view('template/admin_header');
-					$this->load->view('template/admin_left');
-					$this->load->view('banner/edit', $data);
-					$this->load->view('template/admin_footer');
-				}
+				// } else {
+				// 	$this->session->set_flashdata('response', '<div class="alert alert-danger">Image dimension should be within 750*1920.</div>');
+			    //     // redirect($this->controller.'/addproduct', 'refresh');
+			    //     $this->load->view('template/admin_header');
+				// 	$this->load->view('template/admin_left');
+				// 	$this->load->view('banner/edit', $data);
+				// 	$this->load->view('template/admin_footer');
+				// }
 			} else {
 				if($this->db->update($this->table, $data, array('id' => $banner_id))) {
 					$this->session->set_flashdata('response', '<div class="alert alert-success">Banner Updated Successfully</div>');

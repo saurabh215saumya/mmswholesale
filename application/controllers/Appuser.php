@@ -433,7 +433,7 @@ class Appuser extends CI_Controller{
         if(!empty($_POST)){
             $email = $_POST['email'];
             $password = $_POST['password'];
-            $result = $this->appuser_model->user_login_by_email($email, $password); // Validate Login Credentials
+            $result = $this->appuser_model->user_login_by_email($email, $password);
             if ($result) {
                 $session_array = array();
                 foreach ($result as $row) {

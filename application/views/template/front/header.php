@@ -1,4 +1,5 @@
 <?php 
+$logginUserArr = $this->session->userdata('front_logged_in');
 // echo "<pre>"; print_r($this->session->userdata('front_logged_in'));
 $pageSlug = $this->uri->segment('1');
 $metaDataArr = getSeoPageMetaData($pageSlug);
@@ -79,7 +80,7 @@ $cartProductArr = getUserCartProduct($userId);
                     <div class="dropdowns-container">
                         <div class="header-column">
                             <div class="header-logo">
-                                <a href="demo-shop-5.html">
+                                <a href="<?php echo base_url(); ?>">
                                     <img alt="MMS Wholesale Template" width="111" height="51" src="<?php echo base_url('assets/images/img/demos/shop/logo-shop.png'); ?>">
                                 </a>
                             </div>
@@ -91,14 +92,14 @@ $cartProductArr = getUserCartProduct($userId);
                         <ul class="top-menu">
                         <?php if($this->session->userdata('front_logged_in')){ ?>
                             <li><a href="<?php echo base_url('my-account'); ?>">My Account</a></li>
-                            <li><a href="<?php echo base_url('category'); ?>">My Wishlist</a></li>
+                            <li><a href="<?php echo base_url('wish-list'); ?>">My Wishlist</a></li>
                             <li><a href="<?php echo base_url('appuser/logout'); ?>">Log Out</a></li>
                         <?php } else { ?>
                             <li><a href="<?php echo base_url('sign-in'); ?>">Log in</a></li>
                         <?php } ?>
                             <li><i class="fa fa-phone"></i><span>+44 7447446059</span></li>
                             <div class="cart-dropdown">
-                                <a href="#" class="cart-dropdown-icon">
+                                <a href="<?php echo base_url('cart-list'); ?>" class="cart-dropdown-icon">
                                     <i class="minicart-icon"></i>
                                     <span class="cart-info">
                                         <span class="cart-qty"><?php echo count($cartProductArr); ?></span>
@@ -108,7 +109,12 @@ $cartProductArr = getUserCartProduct($userId);
                             </div>
                         </ul>
                     </div>
-                    <p class="welcome-msg">DEFAULT WELCOME MSG!</p>
+                    <?php if($this->session->userdata('front_logged_in')){ ?>
+                        <p class="welcome-msg">WELCOME <?php echo $logginUserArr['first_name']." ".$logginUserArr['last_name']; ?></p>
+                    <?php } else { ?>
+                        <p class="welcome-msg">WELCOME GUEST</p>
+                    <?php } ?>
+                    
                 </div>
             </div>
 
@@ -141,16 +147,46 @@ $cartProductArr = getUserCartProduct($userId);
                             <?php 
                             if(!empty($isActiveCategories)){
                             foreach($isActiveCategories as $activeCategory){ ?>
-                                <li class="dropdown dropdown-mega">
-                                    <a href="<?php echo $activeCategory->category_slug; ?>" class="dropdown-toggle"><?php echo $activeCategory->category_name; ?></a>
+                                <li class="dropdown dropdown-mega-small">
+                                    <a href="<?php echo base_url('categories/'.$activeCategory->category_slug); ?>" class="dropdown-toggle"><?php echo $activeCategory->category_name; ?></a>
 
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <div class="dropdown-mega-content">
+                                            <div class="dropdown-mega-content dropdown-mega-content-small">
                                                 <div class="row">
-                                                    <div class="col-md-8">
+                                                    <div class="col-md-7">
                                                         <div class="row">
-                                                            <div class="col-md-4">
+
+                                                            <?php 
+                                                            $isActiveSubCategories = getAllSubCategory($activeCategory->id);
+                                                            if(!empty($isActiveSubCategories)){
+                                                                $i = 0;
+                                                                foreach($isActiveSubCategories as $activeSubCategories){
+                                                                    // Open div for every group of 6
+                                                                    if($i % 10 == 0){
+                                                                        echo '<div class="col-md-6">
+                                                                                <ul class="dropdown-mega-sub-nav">';
+                                                                    }
+                                                                    ?>
+                                                                    <li>
+                                                                        <a href="<?php echo base_url('subcategories/'.$activeSubCategories->sub_category_slug); ?>">
+                                                                            <?php echo $activeSubCategories->sub_category_name; ?>
+                                                                        </a>
+                                                                    </li>
+                                                                    <?php
+                                                                    $i++;
+                                                                    // Close div after every 6 records
+                                                                    if($i % 10 == 0){
+                                                                        echo '</ul></div>';
+                                                                    }
+                                                                }
+                                                                // Close remaining unclosed div
+                                                                if($i % 10 != 0){
+                                                                    echo '</ul></div>';
+                                                                }
+                                                            }
+                                                            ?>
+                                                            <!-- <div class="col-md-6">
                                                                 <ul class="dropdown-mega-sub-nav">
                                                                 <?php 
                                                                 $isActiveSubCategories = getAllSubCategory($activeCategory->id);
@@ -159,7 +195,7 @@ $cartProductArr = getUserCartProduct($userId);
                                                                 <li><a href="<?php echo $activeSubCategories->sub_category_slug; ?>"><?php echo $activeSubCategories->sub_category_name; ?></a></li>
                                                                 <?php } } ?>
                                                                 </ul>
-                                                            </div>
+                                                            </div> -->
                                                         </div>
                                                     </div>
                                                 </div>

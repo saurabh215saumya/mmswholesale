@@ -89,7 +89,7 @@
             </div>
             <div class="footer-copyright">
                 <div class="container">
-                    <a href="index.html" class="logo">
+                    <a href="<?php echo base_url(); ?>" class="logo">
                         <img alt="MMS Wholesale Template" class="img-responsive" width="111" height="51" src="<?php echo base_url('assets/images/img/demos/shop/logo-shop.png'); ?>">
                     </a>
                     <ul class="social-icons">
@@ -133,7 +133,8 @@
     <!-- Current Page Vendor and Views -->
     <script src="<?php echo base_url('assets/js/views/view.contact.js'); ?>"></script>
 
-
+    <script src="<?php echo base_url('assets/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.js'); ?>"></script>
+    <script src="<?php echo base_url('assets/vendor/elevatezoom/jquery.elevatezoom.js'); ?>"></script>
 
     <!-- Demo -->
     <script src="<?php echo base_url('assets/js/demos/demo-shop-5.js'); ?>"></script>

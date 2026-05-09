@@ -221,6 +221,25 @@ if ( ! function_exists('getAllCategory')) {
     }
   }
 }
+
+if ( ! function_exists('getAllSubCategories')) {
+  function getAllSubCategories() {
+    $CI =& get_instance();  
+    $CI->db->from('tbl_sub_category');
+    $CI->db->where('is_deleted', "0");
+    $CI->db->where('status', "1");
+    //$CI->db->limit($limit,$start);
+    $CI->db->order_by('sub_category_name', 'ASC');
+    $query = $CI->db->get();
+    // echo $CI->db->last_query(); die;
+    $count=$query->num_rows();
+    if($count>0){
+      return $query->result();
+    } else {
+      return array();
+    }
+  }
+}
 /* Function for get all category end */
 
 /* Function for get all category start */
@@ -303,19 +322,66 @@ if ( ! function_exists('getCategoryName')) {
         }      
     }
 }
+
+if ( ! function_exists('getCategoryNameBySlug')) {
+    function getCategoryNameBySlug($slug=""){
+        $CI =& get_instance();
+        $CI->db->select('category_name');
+        $CI->db->where('category_slug',$slug);
+        $query=$CI->db->get('tbl_category');
+        if($query->num_rows()>0) {
+          $results = $query->row();                
+          return $results->category_name;
+        } else { 
+          return '';
+        }      
+    }
+}
+/* Function for get brand name end */
+
+/* Function for get brand name start */
+if ( ! function_exists('getSubCategoryName')) {
+    function getSubCategoryName($id=""){
+        $CI =& get_instance();
+        $CI->db->select('sub_category_name');
+        $CI->db->where('id',$id);
+        $query=$CI->db->get('tbl_sub_category');
+        if($query->num_rows()>0) {
+          $results = $query->row();                
+          return $results->sub_category_name;
+        } else { 
+          return '';
+        }      
+    }
+}
+
+if ( ! function_exists('getSubCategoryNameBySlug')) {
+    function getSubCategoryNameBySlug($slug=""){
+        $CI =& get_instance();
+        $CI->db->select('sub_category_name');
+        $CI->db->where('sub_category_slug',$slug);
+        $query=$CI->db->get('tbl_sub_category');
+        if($query->num_rows()>0) {
+          $results = $query->row();
+          return $results->sub_category_name;
+        } else { 
+          return '';
+        }      
+    }
+}
 /* Function for get brand name end */
 
 
 /* Function for get product name start */
-if ( ! function_exists('getServiceName')) {
-    function getServiceName($id=""){
+if ( ! function_exists('getSubCatIdByProductId')) {
+    function getSubCatIdByProductId($id=""){
         $CI =& get_instance();
-        $CI->db->select('service_name');
+        $CI->db->select('category_id');
         $CI->db->where('id',$id);
-        $query=$CI->db->get('tbl_services');
+        $query=$CI->db->get('tbl_products');
         if($query->num_rows()>0) {
           $results = $query->row();                
-          return $results->service_name;
+          return $results->category_id;
         } else { 
           return '';
         }      
@@ -341,20 +407,7 @@ if ( ! function_exists('getAdminUserName')) {
     }
 }
 
-/* Function for get category id by slug name start */
-if ( ! function_exists('getCategoryId')) {
-    function getCategoryId($slug){
-        $CI =& get_instance();
-        $CI->db->select('id');
-        $CI->db->where('category_slug',$slug);
-        $query=$CI->db->get('tbl_category');
-        if($query->num_rows()>0) {
-          $results = $query->row();                
-          return $results->id;
-        }     
-    }
-}
-/* Function for get package id by slug name end */
+
 
 
 
@@ -559,3 +612,47 @@ if ( ! function_exists('getAllBrands')) {
   }
 }
 /* Function for get all brands end */
+
+/* Function for get category id by category slug name start */
+if ( ! function_exists('getCategoryIdByCatSlug')) {
+    function getCategoryIdByCatSlug($slug){
+        $CI =& get_instance();
+        $CI->db->select('id');
+        $CI->db->where('category_slug',$slug);
+        $query=$CI->db->get('tbl_category');
+        if($query->num_rows()>0) {
+          $results = $query->row();                
+          return $results->id;
+        }     
+    }
+}
+
+if ( ! function_exists('getSubCategoryIdBySubCatSlug')) {
+    function getSubCategoryIdBySubCatSlug($slug){
+        $CI =& get_instance();
+        $CI->db->select('id');
+        $CI->db->where('sub_category_slug',$slug);
+        $query=$CI->db->get('tbl_sub_category');
+        if($query->num_rows()>0) {
+          $results = $query->row();                
+          return $results->id;
+        }     
+    }
+}
+/* Function for get package id by category slug name end */
+
+
+/* Function for get category id by sub category slug name start */
+if ( ! function_exists('getCategoryIdBySubCatSlug')) {
+    function getCategoryIdBySubCatSlug($slug){
+        $CI =& get_instance();
+        $CI->db->select('category_id');
+        $CI->db->where('sub_category_slug',$slug);
+        $query=$CI->db->get('tbl_sub_category');
+        if($query->num_rows()>0) {
+          $results = $query->row();                
+          return $results->category_id;
+        }     
+    }
+}
+/* Function for get package id by sub category slug name end */

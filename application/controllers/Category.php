@@ -15,6 +15,7 @@ class Category extends CI_Controller{
 		parent::__construct();
 		$this->table = 'tbl_category';        
 		$this->load->model('Category_model');
+		$this->load->model('Product_model');
 		$this->load->model('Home_model');
 		$this->controller = $this->router->fetch_class();
 	}
@@ -444,7 +445,19 @@ class Category extends CI_Controller{
 
 
 /* Front-End Section Start */
-	public function category_list(){
+	public function category_list($slug){
+		$pageSlug = $this->uri->segment('1');
+		if($pageSlug === 'categories'){
+			$categoryId = getCategoryIdByCatSlug($slug);
+			$data['allProductsByCategory'] = $this->Product_model->getAllCategoryProductsBySlug($categoryId);
+		}
+
+		if($pageSlug === 'subcategories'){
+			$subcategoryId = getSubCategoryIdBySubCatSlug($slug);
+			$data['allProductsByCategory'] = $this->Product_model->getAllSubCategoryProductsBySlug($subcategoryId);
+		}
+		$data['isActiveCategories'] = getAllCategory();
+		
 		$this->load->view('template/front/header', $data);
 		$this->load->view('category/category_list', $data);
 		$this->load->view('template/front/footer', $data);

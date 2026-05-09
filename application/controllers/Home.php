@@ -14,7 +14,8 @@ class Home extends CI_Controller{
 		parent::__construct();
 		// $this->table = 'tbl_faqs';        
 		$this->load->model('Home_model');
-		$this->load->model('Category_model');
+		$this->load->model('Category_model'); 
+		$this->load->model('Product_model');
 		$this->controller = $this->router->fetch_class();
 	}
 
@@ -23,12 +24,7 @@ class Home extends CI_Controller{
 		$data['isActiveCategories'] = getAllCategory();
 		$data['allBanners'] = $this->Home_model->getHomeBanners(); // get home banner data
 		$data['allBrands'] = getAllBrands();
-		$data['amazingServices'] = $this->Home_model->getPageData('amazing_services');
-		// $data['allPackages'] = $this->Home_model->getAllPackages();
-		$data['ourPricing'] = $this->Home_model->getPageData('our_pricing_content');
-		$data['ourPackagesPricing'] = $this->Home_model->getPageData('our_packages_pricing');
-		$data['footerContent'] = $this->Home_model->getPageData('footer_content');
-		$data['aboutCompany'] = $this->Home_model->getPageData('about-company');
+		$data['allCategoryProducts'] = $this->Product_model->getAllCategoryProducts();
 		$this->load->view('template/front/header', $data);
 		$this->load->view('template/front/home_banner', $data);
 		$this->load->view('template/front/home_page_bar', $data);

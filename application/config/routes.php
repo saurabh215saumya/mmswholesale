@@ -55,10 +55,12 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['admin'] = 'admin/index';
 $route['admin/(:any)'] = 'admin/$1';
+$route['appuser'] = 'appuser/index';
 $route['banner'] = 'banner/index';
 $route['brand'] = 'brand/index';
 $route['category'] = 'category/index';
 $route['subcategory'] = 'subcategory/index';
+$route['product'] = 'product/index';
 $route['location'] = 'location/index';
 $route['testimonial'] = 'testimonial/index';
 $route['keyword'] = 'keyword/index';
@@ -84,8 +86,16 @@ $route['contact-us'] = 'home/contact_us';
 $route['about-us'] = 'home/about_us';
 $route['privacy-policy'] = 'home/privacy_policy';
 $route['terms-conditions'] = 'home/terms_conditions';
-$route['categories'] = 'category/category_list';
-$route['product-details/(:any)'] = 'category/product_detail/$1';
+$route['categories/(:any)'] = 'category/category_list/$1';
+$route['subcategories/(:any)'] = 'category/category_list/$1';
+$route['product-details/(:any)'] = 'product/product_detail/$1';
+$route['wish-list'] = 'product/wish_list';
+$route['cart-list'] = 'product/cart_list';
+$route['checkout'] = 'product/cart_checkout';
+$route['order-summary/(:any)'] = 'order/order_summary/$1';
+$route['my-account'] = 'appuser/my_account';
+$route['my-order'] = 'appuser/my_order';
+$route['billing-address'] = 'appuser/billing_address';
 
 // $route['package/package-detail/(:any)'] = 'package/packageDetail/$1';
 
