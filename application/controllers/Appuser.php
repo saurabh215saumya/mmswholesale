@@ -282,6 +282,7 @@ class Appuser extends CI_Controller{
     public function user_signup() {
         if(!empty($_POST)){
             $delivery_add = $_POST['delivery_add'];
+            $user_type = $_POST['user_type'];
             $first_name = $_POST['first_name'];
             $last_name = $_POST['last_name'];
             $email = $_POST['email'];
@@ -307,6 +308,7 @@ class Appuser extends CI_Controller{
                 $res = "duplicate_email";
             }else{
                 $data = array(
+                    'user_type' => $user_type,
                     'first_name' => $first_name,
                     'last_name' => $last_name,
                     'email' => $email,
@@ -439,6 +441,7 @@ class Appuser extends CI_Controller{
                 foreach ($result as $row) {
                     $session_array = array(
                         'id' => $row->id, 
+                        'user_type' => $row->user_type,
                         'first_name' => $row->first_name,
                         'last_name' => $row->last_name,
                         'mobile' => $row->mobile,

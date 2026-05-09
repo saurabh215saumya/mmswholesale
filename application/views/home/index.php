@@ -1,5 +1,13 @@
-<?php // echo "<pre>"; print_r($allCategoryProducts); die; ?>
-<div role="main" class="main">
+<?php // echo "<pre>"; print_r($allCategoryProducts); die; 
+if($this->session->userdata('front_logged_in')){
+    $userId = $this->session->userdata('front_logged_in')['id'];
+    $userType = $this->session->userdata('front_logged_in')['user_type'];
+} else {
+    $userId = "";
+    $userType = "";
+}
+?>
+
     <div class="container mb-lg">
         <h2 class="slider-title">
             <span class="inline-title">OUR PRODUCTS</span>
@@ -18,300 +26,106 @@
                 }
             ?>
 
-            <div class="product">
-                <figure class="product-image-area">
-                    <a href="<?php echo base_url('product-details/'.$products['product_slug']); ?>" title="<?php echo $products['product_name']; ?>" class="product-image">
-                        <img src="<?php echo $img; ?>" alt="<?php echo $products['image_alt_1']; ?>">
-                        <img src="<?php echo $img; ?>" alt="<?php echo $products['image_alt_2']; ?>"
-                            class="product-hover-image">
-                    </a>
+                <div class="product">
+                    <figure class="product-image-area">
+                        <a href="<?php echo base_url('product-details/'.$products['product_slug']); ?>" title="<?php echo $products['product_name']; ?>" class="product-image">
+                            <img src="<?php echo $img; ?>" alt="<?php echo $products['image_alt_1']; ?>">
+                            <img src="<?php echo $img; ?>" alt="<?php echo $products['image_alt_2']; ?>"
+                                class="product-hover-image">
+                        </a>
 
-                    <!-- <a href="#" class="product-quickview">
-                        <i class="fa fa-share-square-o"></i>
-                        <span>Quick View</span>
-                    </a> -->
-                    <!-- <div class="product-label"><span class="discount">-10%</span></div>
-                    <div class="product-label"><span class="new">New</span></div> -->
-                </figure>
-                <div class="product-details-area">
-                    <h2 class="product-name"><a href="<?php echo base_url('product-details/'.$products['product_slug']); ?>" title="<?php echo $products['product_name']; ?>"><?php echo $products['product_name']; ?></a></h2>
-                    <!-- <div class="product-ratings">
-                        <div class="ratings-box">
-                            <div class="rating" style="width:60%"></div>
-                        </div>
-                    </div> -->
+                        <!-- <a href="#" class="product-quickview">
+                            <i class="fa fa-share-square-o"></i>
+                            <span>Quick View</span>
+                        </a> -->
+                        <!-- <div class="product-label"><span class="discount">-10%</span></div>
+                        <div class="product-label"><span class="new">New</span></div> -->
+                    </figure>
+                    <div class="product-details-area">
+                        <h2 class="product-name"><a href="<?php echo base_url('product-details/'.$products['product_slug']); ?>" title="<?php echo $products['product_name']; ?>"><?php echo $products['product_name']; ?></a></h2>
 
-                    <div class="product-price-actions-row">
-                        <div class="product-price-box">
-                            <!-- <span class="old-price">$99.00</span> -->
-                            <span class="product-price"><?php echo CURRENCY_SYMBOL. " ".$products['price']; ?></span>
-                        </div>
-                        <div class="product-actions">
-                            <a href="#" class="addtocart" title="Add to Cart">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span>Add to Cart</span>
-                            </a>
-                            <a href="#" class="addtowishlist" title="Add to Wishlist">
-                                <i class="fa fa-heart"></i>
-                            </a>
+
+                        <div class="product-bottom-row">
+                            <div class="product-price-box">
+                                <span class="product-price">
+                                <?php 
+                                    if($userType == 1){
+                                        echo CURRENCY_SYMBOL. " ".$products['wholesale_price'];
+                                    } else if($userType == 2){
+                                        echo CURRENCY_SYMBOL. " ".$products['retailer_price'];
+                                    } else {
+                                        echo CURRENCY_SYMBOL. " ".$products['price'];
+                                    }
+                                ?>
+                                </span>
+                            </div>
+                            <div class="product-actions">
+                                <?php 
+                                $productExist = checkUserProductInCart($products['id'], $products['category_id'], $products['sub_cat_id'], $userId); 
+                                if(empty($productExist)){
+                                ?>
+                                <a onclick="return addProductQuantity('<?php echo $products['category_id']; ?>', '<?php echo $products['sub_cat_id']; ?>', '<?php echo $products['id']; ?>');" class="addtocart" title="Add to Cart">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Add to Cart</span>
+                                </a>
+                                <?php } else { ?>
+                                <a href="<?php echo base_url('cart-list'); ?>" class="addtocart" title="Add to Cart">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Item in Cart</span>
+                                </a>
+                                <?php } ?>
+                                <a href="#" class="addtowishlist addtowishlist-always" title="Add to Wishlist">
+                                    <i class="fa fa-heart"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        <?php } ?>
+            <?php } ?>
         </div>
-    <?php } ?>
+        <?php } ?>
     </div>
 
-    <!-- <div class="container mb-xs">
-        <h2 class="slider-title">
-            <span class="inline-title">New PRODUCTS</span>
-            <span class="line"></span>
-        </h2>
 
-        <div class="owl-carousel owl-theme manual new-products-carousel hide-addtolinks">
-            <div class="product">
-                <figure class="product-image-area">
-                    <a href="demo-shop-5-product-details.html" title="Product Name" class="product-image">
-                        <img src="<?php echo base_url('assets/images/img/demos/shop/products/product17.jpg'); ?>" alt="Product Name">
-                    </a>
 
-                    <a href="#" class="product-quickview">
-                        <i class="fa fa-share-square-o"></i>
-                        <span>Quick View</span>
-                    </a>
-                    <div class="product-label"><span class="discount">-10%</span></div>
-                    <div class="product-label"><span class="new">New</span></div>
-                </figure>
-                <div class="product-details-area">
-                    <h2 class="product-name"><a href="demo-shop-5-product-details.html" title="Product Name">Noa
-                            Sheer Blouse</a></h2>
-                    <div class="product-ratings">
-                        <div class="ratings-box">
-                            <div class="rating" style="width:60%"></div>
-                        </div>
-                    </div>
 
-                    <div class="product-price-box">
-                        <span class="old-price">$99.00</span>
-                        <span class="product-price">$89.00</span>
-                    </div>
+<input type="hidden" name="session_user_id" id="session_user_id" value="<?php echo $this->session->userdata('front_logged_in')['id']; ?>">
 
-                    <div class="product-actions">
-                        <a href="#" class="addtowishlist" title="Add to Wishlist">
-                            <i class="fa fa-heart"></i>
-                        </a>
-                        <a href="#" class="addtocart" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span>Add to Cart</span>
-                        </a>
-                        <a href="#" class="comparelink" title="Add to Compare">
-                            <i class="glyphicon glyphicon-signal"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
+<script type="text/javascript">
+    function addProductQuantity(cat_id, sub_cat_id, product_id){
 
-            <div class="product">
-                <figure class="product-image-area">
-                    <a href="demo-shop-5-product-details.html" title="Product Name" class="product-image">
-                        <img src="<?php echo base_url('assets/images/img/demos/shop/products/product13.jpg'); ?>" alt="Product Name">
-                        <img src="<?php echo base_url('assets/images/img/demos/shop/products/product13-2.jpg'); ?>" alt="Product Name"
-                            class="product-hover-image">
-                    </a>
-
-                    <a href="#" class="product-quickview">
-                        <i class="fa fa-share-square-o"></i>
-                        <span>Quick View</span>
-                    </a>
-                    <div class="product-label"><span class="discount">-25%</span></div>
-                </figure>
-                <div class="product-details-area">
-                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
-                            title="Product Name">Women Fashion Blouse</a></h2>
-                    <div class="product-ratings">
-                        <div class="ratings-box">
-                            <div class="rating" style="width:0%"></div>
-                        </div>
-                    </div>
-
-                    <div class="product-price-box">
-                        <span class="old-price">$120.00</span>
-                        <span class="product-price">$90.00</span>
-                    </div>
-
-                    <div class="product-actions">
-                        <a href="#" class="addtowishlist" title="Add to Wishlist">
-                            <i class="fa fa-heart"></i>
-                        </a>
-                        <a href="#" class="addtocart" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span>Add to Cart</span>
-                        </a>
-                        <a href="#" class="comparelink" title="Add to Compare">
-                            <i class="glyphicon glyphicon-signal"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product">
-                <figure class="product-image-area">
-                    <a href="demo-shop-5-product-details.html" title="Product Name" class="product-image">
-                        <img src="<?php echo base_url('assets/images/img/demos/shop/products/product14.jpg'); ?>" alt="Product Name">
-                    </a>
-
-                    <a href="#" class="product-quickview">
-                        <i class="fa fa-share-square-o"></i>
-                        <span>Quick View</span>
-                    </a>
-                </figure>
-                <div class="product-details-area">
-                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
-                            title="Product Name">Fashion Dress</a></h2>
-                    <div class="product-ratings">
-                        <div class="ratings-box">
-                            <div class="rating" style="width:60%"></div>
-                        </div>
-                    </div>
-
-                    <div class="product-price-box">
-                        <span class="product-price">$70.00</span>
-                    </div>
-
-                    <div class="product-actions">
-                        <a href="#" class="addtowishlist" title="Add to Wishlist">
-                            <i class="fa fa-heart"></i>
-                        </a>
-                        <a href="#" class="addtocart" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span>Add to Cart</span>
-                        </a>
-                        <a href="#" class="comparelink" title="Add to Compare">
-                            <i class="glyphicon glyphicon-signal"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product">
-                <figure class="product-image-area">
-                    <a href="demo-shop-5-product-details.html" title="Product Name" class="product-image">
-                        <img src="<?php echo base_url('assets/images/img/demos/shop/products/product15.jpg'); ?>" alt="Product Name">
-                    </a>
-
-                    <a href="#" class="product-quickview">
-                        <i class="fa fa-share-square-o"></i>
-                        <span>Quick View</span>
-                    </a>
-                    <div class="product-label"><span class="discount">-20%</span></div>
-                </figure>
-                <div class="product-details-area">
-                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
-                            title="Product Name">Fashion Sweater</a></h2>
-                    <div class="product-ratings">
-                        <div class="ratings-box">
-                            <div class="rating" style="width:80%"></div>
-                        </div>
-                    </div>
-
-                    <div class="product-price-box">
-                        <span class="old-price">$100.00</span>
-                        <span class="product-price">$90.00</span>
-                    </div>
-
-                    <div class="product-actions">
-                        <a href="#" class="addtowishlist" title="Add to Wishlist">
-                            <i class="fa fa-heart"></i>
-                        </a>
-                        <a href="#" class="addtocart" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span>Add to Cart</span>
-                        </a>
-                        <a href="#" class="comparelink" title="Add to Compare">
-                            <i class="glyphicon glyphicon-signal"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product">
-                <figure class="product-image-area">
-                    <a href="demo-shop-5-product-details.html" title="Product Name" class="product-image">
-                        <img src="<?php echo base_url('assets/images/img/demos/shop/products/product16.jpg'); ?>" alt="Product Name">
-                    </a>
-
-                    <a href="#" class="product-quickview">
-                        <i class="fa fa-share-square-o"></i>
-                        <span>Quick View</span>
-                    </a>
-                </figure>
-                <div class="product-details-area">
-                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
-                            title="Product Name">Woman Shee Blouse</a></h2>
-                    <div class="product-ratings">
-                        <div class="ratings-box">
-                            <div class="rating" style="width:0%"></div>
-                        </div>
-                    </div>
-
-                    <div class="product-price-box">
-                        <span class="product-price">$70.00</span>
-                    </div>
-
-                    <div class="product-actions">
-                        <a href="#" class="addtowishlist" title="Add to Wishlist">
-                            <i class="fa fa-heart"></i>
-                        </a>
-                        <a href="#" class="addtocart" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span>Add to Cart</span>
-                        </a>
-                        <a href="#" class="comparelink" title="Add to Compare">
-                            <i class="glyphicon glyphicon-signal"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product">
-                <figure class="product-image-area">
-                    <a href="demo-shop-5-product-details.html" title="Product Name" class="product-image">
-                        <img src="<?php echo base_url('assets/images/img/demos/shop/products/product17.jpg'); ?>" alt="Product Name">
-                    </a>
-
-                    <a href="#" class="product-quickview">
-                        <i class="fa fa-share-square-o"></i>
-                        <span>Quick View</span>
-                    </a>
-                    <div class="product-label"><span class="new">New</span></div>
-                </figure>
-                <div class="product-details-area">
-                    <h2 class="product-name"><a href="demo-shop-5-product-details.html"
-                            title="Product Name">Pink Woman Shirt</a></h2>
-                    <div class="product-ratings">
-                        <div class="ratings-box">
-                            <div class="rating" style="width:80%"></div>
-                        </div>
-                    </div>
-
-                    <div class="product-price-box">
-                        <span class="product-price">$80.00</span>
-                    </div>
-
-                    <div class="product-actions">
-                        <a href="#" class="addtowishlist" title="Add to Wishlist">
-                            <i class="fa fa-heart"></i>
-                        </a>
-                        <a href="#" class="addtocart" title="Add to Cart">
-                            <i class="fa fa-shopping-cart"></i>
-                            <span>Add to Cart</span>
-                        </a>
-                        <a href="#" class="comparelink" title="Add to Compare">
-                            <i class="glyphicon glyphicon-signal"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
+        // Add item into cart
+        var user_id = $('#session_user_id').val();
+        // alert(user_id);
+        var quantity = 1;
+        var reqUrl = '<?php echo base_url('product/addItemIntoCart'); ?>';
+        if(user_id != ""){
+          if(quantity > 0){
+            var saveData = $.ajax({
+                type: "POST",
+                url: reqUrl,
+                data:"product_id="+product_id+"&user_id="+user_id+"&quantity="+quantity+"&cat_id="+cat_id+"&sub_cat_id="+sub_cat_id,
+                dataType: "text",
+                success: function(resultData){ 
+                 // alert(resultData); return false;
+                    if(resultData == "updated"){
+                        alert("Cart updated successfully.");
+                        window.location.href = "<?php echo base_url('cart-list/'); ?>";
+                        //document.getElementById("quantity_"+sid+"_"+pid).innerHTML = quantity;
+                        // document.getElementById("totPrice_"+id).innerHTML = totProPrice;
+                        
+                    } else {
+                        alert("Cart updated successfully.");
+                        window.location.href = "<?php echo base_url('cart-list/'); ?>";
+                    }
+                }       
+            }); 
+          } else {
+              alert("Product quantity should be grater than 0.");
+          }
+        } else {
+          window.location.href = "<?php echo base_url('/sign-in'); ?>";
+        }
+        
+    }
+</script>

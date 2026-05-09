@@ -29,7 +29,7 @@
 				    <option value="1">Slider Image</option>
 				    <option value="2">Middle Image</option>
 				</select>
-				<?php echo form_error('banner_type'); ?>
+				<?php //echo form_error('banner_type'); ?>
 			    </div> -->
 
 			    <div class="form-group">
@@ -49,7 +49,7 @@
 				<!-- <div class="form-group">
 				<label for="description">Description<span style="color: #ff0000"></span></label>
 					<textarea name="description" id="editor" value="<?php echo set_value('description') ?>"></textarea>
-					<?php echo form_error('description'); ?>
+					<?php //echo form_error('description'); ?>
 				</div> -->
 
 			    <div class="form-group">

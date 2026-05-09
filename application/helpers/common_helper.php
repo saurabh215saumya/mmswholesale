@@ -656,3 +656,26 @@ if ( ! function_exists('getCategoryIdBySubCatSlug')) {
     }
 }
 /* Function for get package id by sub category slug name end */
+
+
+/* Function for user Product in Cart start */
+if ( ! function_exists('checkUserProductInCart')) {
+  function checkUserProductInCart($product_id, $cat_id, $sub_cat_id, $user_id) {
+    $CI =& get_instance();  
+    $CI->db->select('id');
+    $CI->db->from('tbl_cart');
+    $CI->db->where('product_id', $product_id);
+    $CI->db->where('cat_id', $cat_id);
+    $CI->db->where('sub_cat_id', $sub_cat_id);
+    $CI->db->where('user_id', $user_id);
+    $query = $CI->db->get();
+    //echo $CI->db->last_query(); die;
+    $count=$query->num_rows();
+    if($count>0){
+      return $query->row_array();
+    } else {
+      return array();
+    }
+  }
+}
+/* Function for user Product in Cart end */

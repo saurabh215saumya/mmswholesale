@@ -246,3 +246,4 @@ $cartProductArr = getUserCartProduct($userId);
     </div>
 
 <div id="mobile-menu-overlay"></div>
+<div role="main" class="main">

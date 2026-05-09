@@ -1,9 +1,18 @@
+<?php //echo "<pre>"; print_r($allCartProducts); 
+if($this->session->userdata('front_logged_in')){
+    $userType = $this->session->userdata('front_logged_in')['user_type'];
+} else {
+    $userType = "";
+}
+?>
 <div role="main" class="main">
       <div class="cart">
         <div class="container">
           <h1 class="h2 heading-primary mt-lg clearfix">
             <span>Shopping Cart</span>
+            <?php if(!empty($allCartProducts)){ ?>
             <a href="<?php echo base_url('checkout'); ?>" class="btn btn-primary pull-right">Proceed to Checkout</a>
+            <?php } ?>
           </h1>
 
           <div class="row">
@@ -21,81 +30,83 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <?php if(!empty($allCartProducts)){
+                      $subTotal = 0;
+                      $i=1;
+                      foreach($allCartProducts as $row){ 
+                        if(file_exists(UPLOAD_PRODUCT_PATH.$row['proImage'])) {
+                            $proImg = SHOW_PRODUCT_PATH.$row['proImage'];
+                        } else {
+                            $proImg = UPLOAD_PRODUCT_NO_IMAGE.'noimage.png';
+                        }
+                        $totPrice = $row['proPrice']*$row['quantity'];
+                        $subTotal += $totPrice;
+                    ?>
                     <tr>
                       <td class="product-action-td">
-                        <a href="#" title="Remove product" class="btn-remove"><i
+                        <a href="<?php echo base_url('product/delete_cart_list_product/').$row['cartId']; ?>" title="Remove product" class="btn-remove" onclick="return confirm('Are you want to delete this?')"><i
                             class="fa fa-times"></i></a>
                       </td>
                       <td class="product-image-td">
-                        <a href="#" title="Product Name">
-                          <img src="img/demos/shop/products/cart-product1.jpg"
-                            alt="Product Name">
+                        <a href="<?php echo base_url('product-details/'.$row['product_slug']); ?>" title="Product Name">
+                          <img src="<?php echo $proImg; ?>"
+                            alt="<?php echo $row['image_alt_1']; ?>">
                         </a>
                       </td>
                       <td class="product-name-td">
-                        <h2 class="product-name"><a href="#" title="Product Name">Women Fashion
-                            Blouse</a></h2>
+                        <h2 class="product-name"><a href="<?php echo base_url('product-details/'.$row['product_slug']); ?>" title="<?php echo $row['product_name']; ?>"><?php echo $row['product_name']; ?></a></h2>
                       </td>
-                      <td>$120.00</td>
+                      <td>
+                      <span id="proPrice_<?php echo $i; ?>" class="amount">
+                        <?php 
+                          if($userType == 1){
+                              echo CURRENCY_SYMBOL. " ".$row['wholesale_price'];
+                          } else if($userType == 2){
+                              echo CURRENCY_SYMBOL. " ".$row['retailer_price'];
+                          } else {
+                              echo CURRENCY_SYMBOL. " ".$row['proPrice'];
+                          }
+                        ?>
+                      </span>
+                      </td>
                       <td>
                         <div class="qty-holder">
-                          <a href="#" class="qty-dec-btn" title="Dec">-</a>
-                          <input type="text" class="qty-input" value="1">
-                          <a href="#" class="qty-inc-btn" title="Inc">+</a>
-                          <a href="#" class="edit-qty"><i class="fa fa-pencil"></i></a>
+                          <a href="javaScript:void(0);" onclick="return removeCartProductQuantity('<?php echo $row['product_id']; ?>', '<?php echo $i; ?>', '<?php echo $row['cat_id']; ?>', '<?php echo $row['sub_cat_id']; ?>');" class="qty-dec-btn" title="Dec">-</a>
+                          <input type="text" class="qty-input" id="quantity_<?php echo $i; ?>" value="<?php echo $row['quantity']; ?>">
+                          <a href="javaScript:void(0);" onclick="return addCartProductQuantity('<?php echo $row['product_id']; ?>', '<?php echo $i; ?>', '<?php echo $row['cat_id']; ?>', '<?php echo $row['sub_cat_id']; ?>');" class="qty-inc-btn" title="Inc">+</a>
+                          <!-- <a href="#" class="edit-qty"><i class="fa fa-pencil"></i></a> -->
                         </div>
                       </td>
                       <td>
-                        <span class="text-primary">$120.00</span>
+                        <span class="text-primary" id="totPrice_<?php echo $i; ?>"><?php echo CURRENCY_SYMBOL." ".$row['amount']; ?></span>
                       </td>
                     </tr>
-                    <tr>
-                      <td class="product-action-td">
-                        <a href="#" title="Remove product" class="btn-remove"><i
-                            class="fa fa-times"></i></a>
-                      </td>
-                      <td class="product-image-td">
-                        <a href="#" title="Product Name">
-                          <img src="img/demos/shop/products/cart-product2.jpg"
-                            alt="Product Name">
-                        </a>
-                      </td>
-                      <td class="product-name-td">
-                        <h2 class="product-name"><a href="#" title="Product Name">Black Utility
-                            Top</a></h2>
-                      </td>
-                      <td>$49.00</td>
-                      <td>
-                        <div class="qty-holder">
-                          <a href="#" class="qty-dec-btn" title="Dec">-</a>
-                          <input type="text" class="qty-input" value="1">
-                          <a href="#" class="qty-inc-btn" title="Inc">+</a>
-                          <a href="#" class="edit-qty"><i class="fa fa-pencil"></i></a>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-primary">$49.00</span>
-                      </td>
-                    </tr>
+                    <?php $i++; } } ?>
                   </tbody>
                   <tfoot>
                     <tr>
                       <td colspan="6" class="clearfix">
-                        <button class="btn btn-default hover-primary btn-continue">Continue
+                        <!-- <button class="btn btn-default hover-primary btn-continue">Continue
                           Shopping</button>
                         <button class="btn btn-default hover-primary btn-update">Update Shopping
-                          Cart</button>
-                        <button class="btn btn-default hover-primary btn-clear">Clear Shopping
-                          Cart</button>
+                          Cart</button> -->
+                          <a href="<?php echo base_url(); ?>"><button class="btn btn-default hover-primary btn-update">Continue
+                          Shopping</button></a>
+                          <?php if(!empty($allCartProducts)){ ?>
+                          <a href="<?php echo base_url('product/delete_all_user_cart_list_product/').$row['user_id']; ?>" title="Remove product" onclick="return confirm('Are you want to delete all cart products?')"><button class="btn btn-default hover-primary btn-clear">Clear Shopping
+                          Cart</button></a>
+                        <?php } ?>
+
                       </td>
                     </tr>
                   </tfoot>
                 </table>
               </div>
             </div>
+
             <aside class="col-md-4 col-lg-3 sidebar shop-sidebar">
               <div class="panel-group">
-                <div class="panel panel-default">
+                <!-- <div class="panel panel-default">
                   <div class="panel-heading">
                     <h4 class="panel-title">
                       <a class="accordion-toggle collapsed" data-toggle="collapse"
@@ -157,7 +168,8 @@
                       </form>
                     </div>
                   </div>
-                </div>
+                </div> -->
+
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h4 class="panel-title">
@@ -172,24 +184,27 @@
                         <tbody>
                           <tr>
                             <td>Subtotal</td>
-                            <td>$159.00</td>
+                            <td><?php echo CURRENCY_SYMBOL." ".number_format($subTotal, 2); ?></td>
                           </tr>
                           <tr>
                             <td>Grand Total</td>
-                            <td>$159.00</td>
+                            <td><?php echo CURRENCY_SYMBOL." ".number_format($subTotal, 2); ?></td>
                           </tr>
                         </tbody>
                       </table>
+                      <?php if(!empty($allCartProducts)){ ?>
                       <div class="totals-table-action">
                         <a href="#" class="btn btn-primary btn-block">Proceed to Checkout</a>
-                        <a href="#" class="btn btn-link btn-block">Checkout with Multiple
-                          Addresses</a>
+                        <!-- <a href="#" class="btn btn-link btn-block">Checkout with Multiple
+                          Addresses</a> -->
                       </div>
+                      <?php } ?>
                     </div>
                   </div>
                 </div>
               </div>
             </aside>
+
           </div>
 
           
@@ -197,3 +212,75 @@
       </div>
 
     </div>
+
+    <input type="hidden" name="session_user_id" id="session_user_id" value="<?php echo $this->session->userdata('front_logged_in')['id']; ?>">
+    <script type="text/javascript">
+    function addCartProductQuantity(product_id, id, cat_id, sub_cat_id){
+        var value = parseInt(document.getElementById('quantity_'+id).value, 10);
+        value = isNaN(value) ? 0 : value;
+        value++;
+        document.getElementById('quantity_'+id).value = value;
+
+        var user_id = $('#session_user_id').val();
+        var quantity = $('#quantity_'+id).val();
+        var proPrice = document.getElementById("proPrice_"+id).innerHTML;
+        var totPrice = (proPrice*quantity);
+        var totProPrice = totPrice.toFixed(2);
+
+        var reqUrl = '<?php echo base_url('product/addItemIntoCart'); ?>';
+
+        if(quantity > 0){
+            var saveData = $.ajax({
+                type: "POST",
+                url: reqUrl,
+                data:"product_id="+product_id+"&user_id="+user_id+"&quantity="+quantity+"&cat_id="+cat_id+"&sub_cat_id="+sub_cat_id,
+                dataType: "text",
+                success: function(resultData){ // alert(resultData); return false;
+                    if(resultData == "updated"){
+                        document.getElementById("quantity_"+id).innerHTML = quantity;
+                        document.getElementById("totPrice_"+id).innerHTML = totProPrice;
+                    }
+                    // alert("Cart updated successfully.");
+                    window.location.href = "<?php echo base_url('cart-list/'); ?>";
+                }       
+            }); 
+        } else {
+            alert("Product quantity should be grater than 0.");
+        }
+    }
+
+    function removeCartProductQuantity(product_id, id, cat_id, sub_cat_id){
+        var quantity = $("#quantity_"+id).val();
+        var new_quantity = quantity-1;
+        if(new_quantity>=1){
+            document.getElementById("quantity_"+id).value = new_quantity;   
+
+            var user_id = $('#session_user_id').val();
+            var quantity = $('#quantity_'+id).val();
+            var proPrice = document.getElementById("proPrice_"+id).innerHTML;
+            var totPrice = (proPrice*quantity);
+            var totProPrice = totPrice.toFixed(2);
+
+            var reqUrl = '<?php echo base_url('product/addItemIntoCart'); ?>';
+
+            if(quantity > 0){
+                var saveData = $.ajax({
+                    type: "POST",
+                    url: reqUrl,
+                    data:"product_id="+product_id+"&user_id="+user_id+"&quantity="+quantity+"&cat_id="+cat_id+"&sub_cat_id="+sub_cat_id,
+                    dataType: "text",
+                    success: function(resultData){
+                        if(resultData == "updated"){
+                            document.getElementById("quantity_"+id).innerHTML = quantity;
+                            document.getElementById("totPrice_"+id).innerHTML = totProPrice;
+                        }
+                        // alert("Cart updated successfully.");
+                        window.location.href = "<?php echo base_url('cart-list/'); ?>";
+                    }       
+                }); 
+            } else {
+                alert("Product quantity should be grater than 0.");
+            }
+        }
+    }
+</script>

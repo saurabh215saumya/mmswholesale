@@ -160,6 +160,25 @@ public function getAllActiveServicePages() {
 /* Admin Section End */
 
 
+
+/* Function for get service details start */
+public function getProductDetailsById($id) {
+    $data = array();
+    $query = $this->db->select("*")
+                ->from($this->table)
+                ->where(array("$this->table.id" => $id, "$this->table.status" => 1, "$this->table.is_deleted" => 0))
+                ->get();
+                // echo $this->db->last_query(); die;
+    if ($query->num_rows() > 0) {
+        $data = $query->row_array();         
+        return $data;  
+    } else {
+        return $data;
+    }
+}
+/* Function for get service details end */ 
+
+
 /* Function for get service details start */
 public function getProductDetails($slug) {
     $data = array();
@@ -231,6 +250,69 @@ public function getAllSubCategoryProductsBySlug($subcategoryId) {
 }
 
 /* Function for get all category products by slug end */
+
+
+/* Function for check cart for update duplicate entry start */
+    public function checkCartOtherProduct($cat_id, $sub_cat_id, $product_id, $user_id) {
+        $data = array();
+        $query = $this->db->select('*')
+        ->from('tbl_cart')
+        ->where('cat_id', $cat_id )
+        ->where('sub_cat_id', $sub_cat_id)
+        ->where('product_id', $product_id)
+        ->where('user_id', $user_id)
+        ->get();
+        // echo $this->db->last_query();die;
+        if($query->num_rows() > 0 ) {
+            return  $query->row_array();
+        } else {
+            return $data;
+        }
+    }
+    /* Function for check cart for update duplicate entry end */
+
+
+    /* Function for get all user cart product start */
+    public function getUserCartProduct($user_id=""){
+        $data = array();
+        $query = $this->db->select('tc.id as cartId, tc.user_id, tc.cat_id, tc.sub_cat_id, tc.product_id, tc.quantity, tc.amount, tp.id as proId, tp.product_name, tp.product_slug, tp.price AS proPrice, tp.wholesale_price, tp.retailer_price, tp.image AS proImage, tp.image_alt_1')
+        ->from('tbl_cart AS tc')
+        ->join('tbl_products AS tp', 'tp.id = tc.product_id')
+        ->where('tc.user_id', $user_id)
+        ->order_by('tc.id', 'DESC')
+        ->get();
+        // echo $this->db->last_query();
+        if ($query->num_rows() > 0) {
+            $data = $query->result_array();
+            return $data;
+        } else {
+            return $data;
+        }
+    }
+    /* Function for get all user cart product end */
+
+    /* Function for delete cart list product start */
+    public function deleteCartProduct($id) {
+        $this->db->where('id', $id);
+        if($this->db->delete('tbl_cart')){
+            return TRUE;
+        } else {
+            return FALSE;
+        }   
+    }
+    /* Function for delete cart list product end */
+
+
+    /* Function for delete user cart list product start */
+    public function deleteAllUserCartProduct($userId) {
+        $this->db->where('user_id', $userId);
+        if($this->db->delete('tbl_cart')){
+            return TRUE;
+        } else {
+            return FALSE;
+        }   
+    }
+    /* Function for delete user cart list product end */
 
 
 

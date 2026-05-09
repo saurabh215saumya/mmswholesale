@@ -1092,8 +1092,10 @@ class Product extends CI_Controller{
 		// $data['whyWeBest'] = $this->Home_model->getPageData('why_we_best');
 		$data['produictDetails'] = $this->Product_model->getProductDetails($slug);
 		// $data['allPackageServices'] = $this->Package_model->getPackageServices($packageId);
+		$data['allBanners'] = $this->Home_model->getHomeBanners();
 
 		$this->load->view('template/front/header', $data);
+		$this->load->view('template/front/home_banner', $data);
 		$this->load->view('product/product_detail', $data);
 		$this->load->view('template/front/footer', $data);
 	}
@@ -1105,7 +1107,7 @@ class Product extends CI_Controller{
 		$data['isActiveCategories'] = getAllCategory();
 		$data['controller'] = $this->controller;
 		$user_id = $this->session->userdata('front_logged_in')['id'];
-		// $data['allCartProducts'] = $this->Laundryprice_model->getUserCartProduct($user_id);
+		$data['allCartProducts'] = $this->Product_model->getUserCartProduct($user_id);
 		$this->load->view('template/front/header', $data);
 		$this->load->view('product/cart_list', $data);
 		$this->load->view('template/front/footer', $data);
@@ -1133,6 +1135,81 @@ class Product extends CI_Controller{
 		$this->load->view('template/front/footer', $data);
 	}
 /* Function for get user cart list end */
+
+
+/* Function for Add Single Item Into CART start */
+	public function addItemIntoCart() {
+		$product_id = $_POST['product_id'];
+		$user_id = $_POST['user_id'];
+		$quantity = $_POST['quantity'];
+		$cat_id = $_POST['cat_id'];
+		$sub_cat_id = $_POST['sub_cat_id'];
+		// $totalProductAmount = $_POST['product_price'];
+
+		$productDetailArr = $this->Product_model->getProductDetailsById($product_id);
+		// echo $product_id;
+		// echo "<pre>"; print_r($productDetailArr); die;
+		$totalProductAmount = $quantity*$productDetailArr['price'];
+		// $totalCodProductAmount = $quantity*$productDetailArr['old_price'];
+
+		$checkCartProduct = $this->Product_model->checkCartOtherProduct($cat_id, $sub_cat_id, $product_id, $user_id);
+		// echo '<pre>'; print_r($checkCartProduct); die;
+		if(count($checkCartProduct)>0){
+            // $updatedQuantity = ($checkCartProduct['quantity']+$quantity);
+            $updatedQuantity = $quantity;
+            $totUpdatedAmount = $updatedQuantity*$productDetailArr['price'];
+            // $totCodUpdatedAmount = $updatedQuantity*$productDetailArr['old_price'];
+            $updateCartArr = array(
+                "quantity" => $updatedQuantity,
+                "amount" => $totUpdatedAmount,
+            );
+            $whereCondArr = array("cat_id" => $cat_id, "sub_cat_id" => $sub_cat_id, "product_id" => $product_id, "user_id" => $user_id);
+            if($this->db->update("tbl_cart", $updateCartArr, $whereCondArr)){
+            	echo "updated";
+            }
+		} else {
+			$insert_data = array(
+				'cat_id' => $cat_id,
+				'sub_cat_id' => $sub_cat_id,
+				'product_id' => $product_id,
+				'user_id' => $user_id,
+				'quantity' => $quantity,
+				'amount' => $totalProductAmount,
+				'addedOn' => date('Y-m-d h:i:s'),
+			);
+			if($this->db->insert('tbl_cart', $insert_data)){
+				echo "added";
+			}
+		}
+	}
+/* Function for Add Single Item Into CART end */
+
+
+/* Delete Cart List Product Start */
+	public function delete_cart_list_product($id) {
+		if (!$this->session->userdata('front_logged_in')) {
+			redirect('appuser/login');
+		}
+		$deleted = $this->Product_model->deleteCartProduct($id);
+		if($deleted) {
+			redirect('cart-list', 'refresh');
+		} else {
+			redirect('cart-list', 'refresh');
+		}
+	}
+
+	public function delete_all_user_cart_list_product($userId) {
+		if (!$this->session->userdata('front_logged_in')) {
+			redirect('appuser/login');
+		}
+		$deleted = $this->Product_model->deleteAllUserCartProduct($userId);
+		if($deleted) {
+			redirect('cart-list', 'refresh');
+		} else {
+			redirect('cart-list', 'refresh');
+		}
+	}
+/* Delete Cart List Product End */
 
 /* Function End For Front-End Code */	
 

@@ -1,4 +1,11 @@
 <?php //echo "<pre>"; print_r($produictDetails); die; 
+if($this->session->userdata('front_logged_in')){
+    $userId = $this->session->userdata('front_logged_in')['id'];
+    $userType = $this->session->userdata('front_logged_in')['user_type'];
+} else {
+    $userId = "";
+    $userType = "";
+}
 if(file_exists(UPLOAD_PRODUCT_PATH.$produictDetails['image'])) {
   $img = SHOW_PRODUCT_PATH.$produictDetails['image'];
 } else {
@@ -164,7 +171,17 @@ if(file_exists(UPLOAD_PRODUCT_PATH.$produictDetails['image'])) {
                             <div class="product-detail-info">
                                 <div class="product-price-box">
                                     <span class="old-price">$99.00</span>
-                                    <span class="product-price"><?php echo CURRENCY_SYMBOL. " ".$produictDetails['price']; ?></span>
+                                    <span class="product-price">
+                                        <?php 
+                                          if($userType == 1){
+                                              echo CURRENCY_SYMBOL. " ".$produictDetails['wholesale_price'];
+                                          } else if($userType == 2){
+                                              echo CURRENCY_SYMBOL. " ".$produictDetails['retailer_price'];
+                                          } else {
+                                              echo CURRENCY_SYMBOL. " ".$produictDetails['price'];
+                                          }
+                                        ?>
+                                    </span>
                                 </div>
                                 <p class="availability">
                                     <span class="font-weight-semibold">Availability:</span>
@@ -183,10 +200,20 @@ if(file_exists(UPLOAD_PRODUCT_PATH.$produictDetails['image'])) {
                                 <div class="product-detail-qty">
                                     <input type="text" value="1" class="vertical-spinner" id="product-vqty">
                                 </div>
-                                <a href="#" class="addtocart" title="Add to Cart">
+                                <?php 
+                                $productExist = checkUserProductInCart($produictDetails['id'], $produictDetails['category_id'], $produictDetails['sub_cat_id'], $userId); 
+                                if(empty($productExist)){
+                                ?>
+                                <a href="javaScript:void(0);" onclick="return addCartProductQuantity('<?php echo $produictDetails['id']; ?>', '<?php echo $produictDetails['category_id']; ?>', '<?php echo $produictDetails['sub_cat_id']; ?>');" class="addtocart" title="Add to Cart">
                                     <i class="fa fa-shopping-cart"></i>
                                     <span>Add to Cart</span>
                                 </a>
+                                <?php } else { ?>
+                                    <a href="<?php echo base_url('cart-list'); ?>" class="addtocart" title="Add to Cart">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Item in Cart</span>
+                                </a>
+                                <?php } ?>
                                 
                                 <div class="actions-right">
                                     <a href="#" class="addtowishlist" title="Add to Wishlist">
@@ -400,3 +427,39 @@ if(file_exists(UPLOAD_PRODUCT_PATH.$produictDetails['image'])) {
 </div>
 
 </div>
+
+
+
+<input type="hidden" name="session_user_id" id="session_user_id" value="<?php echo $this->session->userdata('front_logged_in')['id']; ?>">
+    <script type="text/javascript">
+    function addCartProductQuantity(product_id, cat_id, sub_cat_id){
+        // var value = parseInt(document.getElementById('product-vqty').value, 10);
+        // value = isNaN(value) ? 0 : value;
+        // value++;
+        // document.getElementById('product-vqty').value = value;
+
+        var user_id = $('#session_user_id').val();
+        var quantity = $('#product-vqty').val();
+
+        var reqUrl = '<?php echo base_url('product/addItemIntoCart'); ?>';
+
+        if(quantity > 0){
+            var saveData = $.ajax({
+                type: "POST",
+                url: reqUrl,
+                data:"product_id="+product_id+"&user_id="+user_id+"&quantity="+quantity+"&cat_id="+cat_id+"&sub_cat_id="+sub_cat_id,
+                dataType: "text",
+                success: function(resultData){ // alert(resultData); return false;
+                    if(resultData == "updated"){
+                        // document.getElementById("quantity_"+id).innerHTML = quantity;
+                        // document.getElementById("totPrice_"+id).innerHTML = totProPrice;
+                    }
+                    // alert("Cart updated successfully.");
+                    window.location.href = "<?php echo base_url('cart-list/'); ?>";
+                }       
+            }); 
+        } else {
+            alert("Product quantity should be grater than 0.");
+        }
+    }
+</script>

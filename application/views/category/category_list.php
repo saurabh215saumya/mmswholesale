@@ -1,4 +1,12 @@
-<?php //echo "<pre>"; print_r($allProductsByCategory); die; ?>
+<?php // echo "<pre>"; print_r($allCategoryProducts); die; 
+if($this->session->userdata('front_logged_in')){
+    $userId = $this->session->userdata('front_logged_in')['id'];
+    $userType = $this->session->userdata('front_logged_in')['user_type'];
+} else {
+    $userId = "";
+    $userType = "";
+}
+?>
 <div role="main" class="main">
       <section class="page-header mb-lg">
         <div class="container">
@@ -112,17 +120,37 @@
 
                     <div class="product-price-box">
                       <!-- <span class="old-price">$99.00</span> -->
-                      <span class="product-price"><?php echo CURRENCY_SYMBOL. " ".$products['price']; ?></span>
+                      <span class="product-price">
+                        <?php 
+                          if($userType == 1){
+                              echo CURRENCY_SYMBOL. " ".$products['wholesale_price'];
+                          } else if($userType == 2){
+                              echo CURRENCY_SYMBOL. " ".$products['retailer_price'];
+                          } else {
+                              echo CURRENCY_SYMBOL. " ".$products['price'];
+                          }
+                        ?>
+                      </span>
                     </div>
 
                     <div class="product-actions">
                       <a href="#" class="addtowishlist" title="Add to Wishlist">
                         <i class="fa fa-heart"></i>
                       </a>
-                      <a href="#" class="addtocart" title="Add to Cart">
+                      <?php 
+                        $productExist = checkUserProductInCart($products['id'], $products['category_id'], $products['sub_cat_id'], $userId); 
+                        if(empty($productExist)){
+                        ?>
+                      <a onclick="return addProductQuantity('<?php echo $products['category_id']; ?>', '<?php echo $products['sub_cat_id']; ?>', '<?php echo $products['id']; ?>');" class="addtocart" title="Add to Cart">
                         <i class="fa fa-shopping-cart"></i>
                         <span>Add to Cart</span>
                       </a>
+                      <?php } else { ?>
+                        <a href="<?php echo base_url('cart-list'); ?>" class="addtocart" title="Add to Cart">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span>Item in Cart</span>
+                        </a>
+                      <?php } ?>
                       <!-- <a href="#" class="comparelink" title="Add to Compare">
                         <i class="glyphicon glyphicon-signal"></i>
                       </a> -->
@@ -348,3 +376,45 @@
       </div>
 
     </div>
+
+
+    <input type="hidden" name="session_user_id" id="session_user_id" value="<?php echo $this->session->userdata('front_logged_in')['id']; ?>">
+
+<script type="text/javascript">
+    function addProductQuantity(cat_id, sub_cat_id, product_id){
+
+        // Add item into cart
+        var user_id = $('#session_user_id').val();
+        // alert(user_id);
+        var quantity = 1;
+        var reqUrl = '<?php echo base_url('product/addItemIntoCart'); ?>';
+        if(user_id != ""){
+          if(quantity > 0){
+            var saveData = $.ajax({
+                type: "POST",
+                url: reqUrl,
+                data:"product_id="+product_id+"&user_id="+user_id+"&quantity="+quantity+"&cat_id="+cat_id+"&sub_cat_id="+sub_cat_id,
+                dataType: "text",
+                success: function(resultData){ 
+                 // alert(resultData); return false;
+                    if(resultData == "updated"){
+                        alert("Cart updated successfully.");
+                        window.location.href = "<?php echo base_url('cart-list/'); ?>";
+                        //document.getElementById("quantity_"+sid+"_"+pid).innerHTML = quantity;
+                        // document.getElementById("totPrice_"+id).innerHTML = totProPrice;
+                        
+                    } else {
+                        alert("Cart updated successfully.");
+                        window.location.href = "<?php echo base_url('cart-list/'); ?>";
+                    }
+                }       
+            }); 
+          } else {
+              alert("Product quantity should be grater than 0.");
+          }
+        } else {
+          window.location.href = "<?php echo base_url('/sign-in'); ?>";
+        }
+        
+    }
+</script>

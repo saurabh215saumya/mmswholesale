@@ -81,6 +81,19 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
+                                <label class="font-weight-normal">User Type <span class="required">*</span></label>
+                                <select class="form-control" name="user_type" id="user_type">
+                                    <option value="1">Wholesaler</option>
+                                    <option value="2">Retailer</option>
+                                    <option value="3">Traider</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
                                 <label class="font-weight-normal">Password <span
                                         class="required">*</span></label>
                                 <input type="password" class="form-control" name="password" id="password">
@@ -228,9 +241,9 @@
         var address_22 = $('#address_22').val();
         var cityname = $('#cityname').val();
         var postal_code = $('#postal_code').val();
+        var user_type = $('#user_type').val();
         var password = $('#password').val();
         var confirm_password = $('#confirm_password').val();
-
         var valid = 1;
         if(first_name == ""){
             $("#first_name").css({'border':'1px dotted red'});
@@ -469,7 +482,7 @@
             var saveData = $.ajax({
                 type: "POST",
                 url: "<?php echo base_url('appuser/user_signup'); ?>",
-                data:"first_name="+first_name+"&last_name="+last_name+"&email="+email+"&mobile="+mobile+"&address_1="+address_11+"&address_2="+address_22+"&cityname="+cityname+"&postal_code="+postal_code+"&confirm_password="+confirm_password+"&del_first_name="+del_first_name+"&del_last_name="+del_last_name+"&del_email="+del_email+"&del_mobile="+del_mobile+"&del_address_11="+del_address_11+"&del_address_22="+del_address_22+"&del_postal_code="+del_postal_code+"&del_cityname="+del_cityname+"&delivery_add="+checkBox.checked,
+                data:"user_type="+user_type+"&first_name="+first_name+"&last_name="+last_name+"&email="+email+"&mobile="+mobile+"&address_1="+address_11+"&address_2="+address_22+"&cityname="+cityname+"&postal_code="+postal_code+"&confirm_password="+confirm_password+"&del_first_name="+del_first_name+"&del_last_name="+del_last_name+"&del_email="+del_email+"&del_mobile="+del_mobile+"&del_address_11="+del_address_11+"&del_address_22="+del_address_22+"&del_postal_code="+del_postal_code+"&del_cityname="+del_cityname+"&delivery_add="+checkBox.checked,
                 dataType: "text",
                 success: function(resultData){ //alert(resultData); return false;
                     if(resultData == "success"){

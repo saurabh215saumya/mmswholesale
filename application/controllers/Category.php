@@ -457,8 +457,10 @@ class Category extends CI_Controller{
 			$data['allProductsByCategory'] = $this->Product_model->getAllSubCategoryProductsBySlug($subcategoryId);
 		}
 		$data['isActiveCategories'] = getAllCategory();
+		$data['allBanners'] = $this->Home_model->getHomeBanners();
 		
 		$this->load->view('template/front/header', $data);
+		$this->load->view('template/front/home_banner', $data);
 		$this->load->view('category/category_list', $data);
 		$this->load->view('template/front/footer', $data);
 	}
