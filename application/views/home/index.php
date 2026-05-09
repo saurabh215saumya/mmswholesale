@@ -74,7 +74,8 @@ if($this->session->userdata('front_logged_in')){
                                     <span>Item in Cart</span>
                                 </a>
                                 <?php } ?>
-                                <a  onclick="return addProductInWishlist('<?php echo $products['id']; ?>');" class="addtowishlist addtowishlist-always" title="Add to Wishlist">
+                                <?php $wishlistExist = checkUserProductInWishlist($products['id'], $userId); ?>
+                                <a onclick="return addProductInWishlist('<?php echo $products['id']; ?>');" class="addtowishlist addtowishlist-always<?php echo !empty($wishlistExist) ? ' active' : ''; ?>" title="<?php echo !empty($wishlistExist) ? 'In Wishlist' : 'Add to Wishlist'; ?>">
                                     <i class="fa fa-heart"></i>
                                 </a>
                             </div>

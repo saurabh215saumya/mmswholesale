@@ -1,0 +1,87 @@
+/* Product bottom row: price left | add to cart center | wishlist right */
+.product .product-details-area .product-bottom-row {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    gap: 4px;
+}
+
+.product .product-details-area .product-bottom-row .product-price-box {
+    display: flex !important;
+    align-items: center;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.product .product-details-area .product-bottom-row .product-price-box .product-price {
+    font-size: 16px !important;
+}
+
+.product .product-details-area .product-bottom-row .product-actions {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    margin: 0 !important;
+    flex-shrink: 0;
+}
+
+.product .product-details-area .product-bottom-row .product-actions a {
+    margin: 0 !important;
+}
+
+/* Reduce add to cart button size */
+.product .product-bottom-row .product-actions a.addtocart {
+    font-size: 11px !important;
+    padding: 0 7px 0 6px !important;
+    height: 26px !important;
+    line-height: 24px !important;
+}
+
+.product .product-bottom-row .product-actions a.addtocart i {
+    font-size: 11px !important;
+    margin-right: 2px;
+}
+
+/* Always show wishlist button visibly like add to cart */
+.product-actions a.addtowishlist-always {
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    right: auto !important;
+    left: auto !important;
+    color: #ed4949 !important;
+    border: 1px solid #ed4949 !important;
+    background-color: #fff !important;
+    height: 26px !important;
+    width: 26px !important;
+    line-height: 26px !important;
+    font-size: 13px !important;
+    border-radius: 5px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+/* Hover on wishlist button */
+.product-actions a.addtowishlist-always:hover,
+.product-actions a.addtowishlist-always.active {
+    color: #fff !important;
+    background-color: #ed4949 !important;
+    border-color: #ed4949 !important;
+}
+
+/* Neutralize theme's product:hover triggering addtocart */
+.product:hover .product-actions a.addtocart:not(:hover) {
+    background-color: #fff !important;
+    border-color: #ccc !important;
+    color: #333 !important;
+}
+
+/* Only activate addtocart on direct hover */
+.product .product-actions a.addtocart:hover {
+    background-color: #64b5f6 !important;
+    border-color: #64b5f6 !important;
+    color: #fff !important;
+}

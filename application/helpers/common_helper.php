@@ -679,3 +679,22 @@ if ( ! function_exists('checkUserProductInCart')) {
   }
 }
 /* Function for user Product in Cart end */
+
+/* Function for user Product in Wishlist start */
+if ( ! function_exists('checkUserProductInWishlist')) {
+  function checkUserProductInWishlist($product_id, $user_id) {
+    $CI =& get_instance();
+    $CI->db->select('id');
+    $CI->db->from('tbl_wishlist_product');
+    $CI->db->where('product_id', $product_id);
+    $CI->db->where('user_id', $user_id);
+    $query = $CI->db->get();
+    $count = $query->num_rows();
+    if($count > 0){
+      return $query->row_array();
+    } else {
+      return array();
+    }
+  }
+}
+/* Function for user Product in Wishlist end */
